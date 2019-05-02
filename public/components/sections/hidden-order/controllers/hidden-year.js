@@ -18,12 +18,13 @@
             x: [],
             y: [],
             name: 'Hidden Buy',
-            yaxis: 'y1',
+            // yaxis: 'y1',
+            // type: 'bar',
             mode: 'markers',
             opacity: 1,
             marker: {
                 color: 'green',
-                // size: 20,
+                size: 15,
                 // size: [20, 20, 20, 50]
             }
         };
@@ -32,12 +33,13 @@
             x: [],
             y: [],
             name: 'Hidden Sell',
-            yaxis: 'y2',
+            // yaxis: 'y2',
+            // type: 'bar',
             mode: 'markers',
             opacity: 1,
             marker: {
                 color: 'red',
-                // size: 20,
+                size: 15,
                 // size: [20, 20, 20, 50]
             }
         };
@@ -47,7 +49,7 @@
         function initController() {
             $http({
                 method: "POST",
-                url: "/chart/hidden/day",
+                url: "/chart/hidden/year",
                 data: {
                     str: "init"
                 }
@@ -84,33 +86,34 @@
                         side: 'right'
                     }
                 };
-                console.log('Plotly.newPlot', data1);
+                // console.log('Plotly.newPlot-day', data1);
                 Plotly.newPlot('price-timestamp-chart', data1, layout1);
 
-                var data2 = [$scope.trace2];
+                // var data2 = [$scope.trace2];
+                //
+                // var layout2 = {
+                //     yaxis: {
+                //       title: 'Hidden Buy',
+                //       titlefont: {color: 'rgb(94, 199, 72)'},
+                //       tickfont: {color: 'rgb(94, 199, 72)'},
+                //       overlaying: 'y1',
+                //       side: 'left'
+                //     }
+                // };
+                //
+                // Plotly.newPlot('hidden-timestamp-chart', data2, layout2);
 
-                var layout2 = {
-                    yaxis: {
-                        title: 'Hidden Buy',
-                        titlefont: {color: 'rgb(94, 199, 72)'},
-                        tickfont: {color: 'rgb(94, 199, 72)'},
-                        overlaying: 'y1',
-                        side: 'left'
-                    }
-                };
-
-                Plotly.newPlot('hidden-timestamp-chart', data2, layout2);
-
-                var data3 = [$scope.trace3];
+                var data3 = [$scope.trace2, $scope.trace3];
 
                 var layout3 = {
-                    yaxis: {
-                        title: 'Hidden Sell',
-                        titlefont: {color: 'rgb(194, 99, 72)'},
-                        tickfont: {color: 'rgb(194, 99, 72)'},
-                        overlaying: 'y2',
-                        side: 'right'
-                    }
+                    title: 'Hidden Orders',
+                    // yaxis: {
+                    //     title: 'Hidden Sell',
+                    //     titlefont: {color: 'rgb(194, 99, 72)'},
+                    //     tickfont: {color: 'rgb(194, 99, 72)'},
+                    //     overlaying: 'y2',
+                    //     side: 'right'
+                    // }
                 };
 
                 Plotly.newPlot('hidden-timestamp-chart', data3, layout3);
