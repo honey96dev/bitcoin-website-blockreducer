@@ -13,12 +13,15 @@ router.post('/fft/init', GetLast1MonthFFT);
 // router.post('/fft/custom', GetCustomizeFFT);
 router.post('/fft/estimate', GetEstimateFFT);
 router.post('/fft/customize', GetDataByCandle);
-router.post('/hidden/init', GetLast1MonthHidden);
+router.post('/hidden/day', GetLast1DayHidden);
+router.post('/hidden/year', GetLast1YearHidden);
 router.post('/trade/init', GetLast7dayTrade);
 
 module.exports = router; 
 
 function GetLast1MonthPrice(req, res) {
+    // res.json({});
+    // return;
     priceService.GetLast1MonthPrice()
         .then(function(data) {
             if(data) {
@@ -33,6 +36,8 @@ function GetLast1MonthPrice(req, res) {
 }
 
 function GetCustomizePrice(req, res) {
+    // res.json({});
+    // return;
     var startTime = req.body.startTime;
     var endTime = req.body.endTime;
     priceService.GetCustomizePrice(startTime, endTime)
@@ -49,6 +54,8 @@ function GetCustomizePrice(req, res) {
 }
 
 function GetLast1MonthVolume(req, res) {
+    // res.json({});
+    // return;
     volumeService.GetLast1MonthVolume()
         .then(function(data) {
             if(data) {
@@ -63,6 +70,8 @@ function GetLast1MonthVolume(req, res) {
 }
 
 function GetCustomizeVolume(req, res) {
+    // res.json({});
+    // return;
     var startTime = req.body.startTime;
     var endTime = req.body.endTime;
     volumeService.GetCustomizeVolume(startTime, endTime)
@@ -79,6 +88,8 @@ function GetCustomizeVolume(req, res) {
 }
 
 function GetLast1MonthFFT(req, res) {
+    // res.json({});
+    // return;
     fftService.GetLast1MonthFFT()
         .then(function(data) {
             if(data) {
@@ -93,6 +104,8 @@ function GetLast1MonthFFT(req, res) {
 }
 
 function GetDataByCandle(req, res) {
+    // res.json({});
+    // return;
     var startTime = (new Date( req.body.inputData.startTime)).toISOString();
     var endTime = (new Date(req.body.inputData.endTime)).toISOString();
     var candle = req.body.inputData.candle;
@@ -110,6 +123,8 @@ function GetDataByCandle(req, res) {
 }
 
 function GetEstimateFFT(req, res) {
+    // res.json({});
+    // return;
     var estiamtes = req.body;
     fftService.GetEstimateFFT(estiamtes)
         .then(function(data) {
@@ -125,8 +140,27 @@ function GetEstimateFFT(req, res) {
 }
 
 
-function GetLast1MonthHidden(req, res) {
-    hiddenService.GetLast1MonthHidden()
+function GetLast1DayHidden(req, res) {
+    // res.json({});
+    // return;
+    hiddenService.GetLast1DayHidden()
+        .then(function(data) {
+            if(data) {
+                res.json(data);
+            } else {
+                res.sendStatus(404);
+            }
+        })
+        .catch(function(error) {
+            res.status(400).send(error);
+        });
+}
+
+
+function GetLast1YearHidden(req, res) {
+    // res.json({});
+    // return;
+    hiddenService.GetLast1YearHidden()
         .then(function(data) {
             if(data) {
                 res.json(data);
@@ -140,6 +174,8 @@ function GetLast1MonthHidden(req, res) {
 }
 
 function GetLast7dayTrade (req, res) {
+    // res.json({});
+    // return;
     tradeService.GetLast7dayTrade()
         .then(function(data) {
             if(data) {

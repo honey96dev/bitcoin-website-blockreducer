@@ -38,7 +38,7 @@ function GetCustomizePrice(startTime, endTime) {
 
 function GetMaxIsoDate(callback) {
     var deferred = Q.defer();
-    var selectSql = 'SELECT MAX(isoDate) AS max FROM price_5m_tbl';
+    var selectSql = 'SELECT MAX(`timestamp`) AS max FROM `bitmex_data_5m`';
 
     dbConn.query(selectSql, function(error, results, fields) {
         if (error) {            
@@ -51,7 +51,7 @@ function GetMaxIsoDate(callback) {
 
 function GetCustomizeData (startTime, endTime, callback) {
     var deferred = Q.defer();
-    var selectSql = 'SELECT * FROM price_5m_tbl WHERE isoDate BETWEEN ? AND ?';
+    var selectSql = 'SELECT `timestamp` `isoDate`, `close` FROM `bitmex_data_5m` WHERE `timestamp` BETWEEN ? AND ? ORDER BY `timestamp`;';
     dbConn.query(selectSql, [startTime, endTime], function(error, results, fields) {
         if (error) {            
             deferred.reject("Error!");

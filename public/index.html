@@ -71,14 +71,14 @@
                                 <a href="#" >
                                         <i class="fa fa-line-chart"></i>
                                         <span>Block Charts</span>
-                                        <span class="badge badge-pill badge-warning">New</span>
+                                        <!--<span class="badge badge-pill badge-warning">New</span>-->
                                 </a>
                                 <div class="sidebar-submenu" style="display:block;">
                                     <ul>
                                         <li>
                                             <a ui-sref="price-chart" onmouseover="" />
                                                 Price Chart
-                                                <span class="badge badge-pill badge-success">Pro</span>
+                                                <!--<span class="badge badge-pill badge-success">Pro</span>-->
                                             </a>
                                         </li>
                                         <li>
@@ -104,11 +104,31 @@
                                     <span>OHLC Chart</span>
                                 </a>
                             </li>
-                            <li>
-                                <a ui-sref="hidden-order" onmouseover="" >
+                            <li class="sidebar-dropdown active" id="hidden_chart">
+                                <!--<a ui-sref="hidden-order" onmouseover="" >-->
+                                    <!--<i class="fa fa-area-chart"></i>-->
+                                    <!--<span>Hidden Order</span>-->
+                                <!--</a>-->
+                                <a href="#" >
                                     <i class="fa fa-area-chart"></i>
                                     <span>Hidden Order</span>
+                                    <!--<span class="badge badge-pill badge-warning">New</span>-->
                                 </a>
+                                <div class="sidebar-submenu" style="display:block;">
+                                    <ul>
+                                        <li>
+                                            <a ui-sref="hidden-day-chart" onmouseover="" />
+                                            Day Chart
+                                            <!--<span class="badge badge-pill badge-success">Pro</span>-->
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a ui-sref="hidden-year-chart" onmouseover="" />
+                                            Year Chart
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
                             </li>
                             <li>
                                 <a ui-sref="account" onmouseover="" >
@@ -178,7 +198,8 @@
         <script src='./components/sections/charts/controllers/volume.js'></script>
         <script src='./components/sections/charts/controllers/trade.js'></script>
         <script src='./components/sections/fft/controllers/fft.js'></script>
-        <script src='./components/sections/hidden-order/controllers/hidden-order.js'></script>
+        <script src='./components/sections/hidden-order/controllers/hidden-day.js'></script>
+        <script src='./components/sections/hidden-order/controllers/hidden-year.js'></script>
         <script src='./components/sections/admin/main/controllers/main.js'></script>
         <script src='./components/sections/admin/users/controllers/users.js'></script>
         <script src='./components/sections/admin/estimate/controllers/estimate.js'></script>

@@ -67,12 +67,20 @@
                 data: { activeTab: 'fftChart' }
             })
 
-            .state('hidden-order', {
-                url: '/hidden',
-                templateUrl: './components/sections/hidden-order/views/hidden-order.html',
-                controller: 'HiddenOrderController',
+            .state('hidden-day-chart', {
+                url: '/hidden_day',
+                templateUrl: './components/sections/hidden-order/views/hidden-day.html',
+                controller: 'HiddenOrderDayController',
                 controllerAs: 'vm',
-                data: { activeTab: 'fftChart' }
+                // data: { activeTab: 'fftChart' }
+            })
+
+            .state('hidden-year-chart', {
+                url: '/hidden_year',
+                templateUrl: './components/sections/hidden-order/views/hidden-year.html',
+                controller: 'HiddenOrderYearController',
+                controllerAs: 'vm',
+                // data: { activeTab: 'fftChart' }
             })
 
             .state('admin', {

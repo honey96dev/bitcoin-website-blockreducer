@@ -12,9 +12,10 @@ service.GetCustomizeVolume = GetCustomizeVolume;
 
 module.exports = service;
 
-var tmpDataArray = [];
+
 function GetLast1MonthVolume() {
     var deferred = Q.defer();
+    var tmpDataArray = [];
     GetMaxIsoDate(function(callback) {
         var endTime = callback.max;
         var startTime = new Date(new Date(endTime).getTime() - 2592000000).toISOString();
@@ -57,7 +58,7 @@ function GetCustomizeVolume(startTime, endTime) {
 
 
 function GetCutomizePrice(startTime, endTime, callback) {
-    var selectSql = 'SELECT * FROM price_5m_tbl WHERE isoDate BETWEEN ? AND ?';
+    var selectSql = 'SELECT * FROM bitmex_data_5m_view WHERE isoDate BETWEEN ? AND ?';
     console.log('GetCutomizePrice', startTime, endTime);
     dbConn.query(selectSql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
@@ -68,7 +69,7 @@ function GetCutomizePrice(startTime, endTime, callback) {
 
 function GetMaxIsoDate(callback) {
     var deferred = Q.defer();
-    var selectSql = 'SELECT MAX(isoDate) AS max FROM volume_5m_tbl';
+    var selectSql = 'SELECT MAX(`timestamp`) AS max FROM `bitmex_data_5m`';
 
     dbConn.query(selectSql, function(error, results, fields) {
         if (error) {            
@@ -81,7 +82,8 @@ function GetMaxIsoDate(callback) {
 
 function GetCustomizeData (startTime, endTime, callback) {
     var deferred = Q.defer();
-    var selectSql = 'SELECT * FROM volume_5m_tbl WHERE isoDate BETWEEN ? AND ?';
+    var selectSql = 'SELECT `timestamp` `isoDate`, `volume` FROM `bitmex_data_5m` WHERE `timestamp` BETWEEN ? AND ? ORDER BY `timestamp` ASC';
+    // console.log(selectSql, startTime, endTime);
     dbConn.query(selectSql, [startTime, endTime], function(error, results, fields) {
         if (error) {            
             deferred.reject("Error!");

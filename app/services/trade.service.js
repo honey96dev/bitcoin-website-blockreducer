@@ -26,20 +26,23 @@ function GetLast7dayTrade() {
 
 function GetMaxIsoDate(callback) {
     var deferred = Q.defer();
-    var selectSql = 'SELECT MAX(isoDate) AS max FROM volume_tmp';
+    var selectSql = 'SELECT MAX(isoDate) AS max FROM orders_view';
 
     dbConn.query(selectSql, function(error, results, fields) {
         if (error) {            
             deferred.reject("Error!");
         }
-
-        callback(results[0]);
+        if (results != null && results.length > 0) {
+            callback(results[0]);
+        } else {
+            callback('')
+        }
     });
 }
 
 function GetCustomizeData (startTime, endTime, callback) {
     var deferred = Q.defer();
-    var selectSql = 'SELECT * FROM volume_tmp WHERE isoDate BETWEEN ? AND ?';
+    var selectSql = 'SELECT * FROM orders_view WHERE isoDate BETWEEN ? AND ?';
     dbConn.query(selectSql, [startTime, endTime], function(error, results, fields) {
         if (error) {            
             deferred.reject("Error!");

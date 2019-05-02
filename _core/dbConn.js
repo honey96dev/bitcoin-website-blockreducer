@@ -8,7 +8,7 @@ dbConn.connect(function(err) {
         console.log("!!! Cannot connect !!! Error:");
         throw err;
     } else {
-        console.log("Connection established ID is " + dbConn.threadId);
+        // console.log("Connection established ID is " + dbConn.threadId);
     }   
 });
 
