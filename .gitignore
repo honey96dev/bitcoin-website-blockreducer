@@ -77,3 +77,4 @@ typings/
 .idea/
 _core/config.js
 yarn.lock
+package-lock.json
