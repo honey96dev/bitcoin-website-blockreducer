@@ -10,7 +10,7 @@
             x: [],
             y: [],
             name: 'Price',
-            yaxis: 'y1',
+            yaxis: 'y',
             type: 'scatter'
         };
 
@@ -18,7 +18,7 @@
             x: [],
             y: [],
             name: 'Hidden Buy',
-            // yaxis: 'y1',
+            yaxis: 'y2',
             // type: 'bar',
             mode: 'markers',
             opacity: 1,
@@ -33,7 +33,7 @@
             x: [],
             y: [],
             name: 'Hidden Sell',
-            // yaxis: 'y2',
+            yaxis: 'y2',
             // type: 'bar',
             mode: 'markers',
             opacity: 1,
@@ -87,7 +87,7 @@
                     }
                 };
                 // console.log('Plotly.newPlot-day', data1);
-                Plotly.newPlot('price-timestamp-chart', data1, layout1);
+                // Plotly.newPlot('price-timestamp-chart', data1, layout1);
 
                 // var data2 = [$scope.trace2];
                 //
@@ -103,20 +103,30 @@
                 //
                 // Plotly.newPlot('hidden-timestamp-chart', data2, layout2);
 
-                var data3 = [$scope.trace2, $scope.trace3];
+                var data3 = [$scope.trace1, $scope.trace2, $scope.trace3];
 
                 var layout3 = {
                     title: 'Hidden Orders',
-                    // yaxis: {
-                    //     title: 'Hidden Sell',
-                    //     titlefont: {color: 'rgb(194, 99, 72)'},
-                    //     tickfont: {color: 'rgb(194, 99, 72)'},
-                    //     overlaying: 'y2',
-                    //     side: 'right'
-                    // }
-                };
+                    showlegend: true,
+                    // legend: {
+                    //     "orientation": "h"
+                    // },
+                    // width: 800,
+                    // height: 580,
+                    autosize: true,
+                    // margin: {
+                    //     l: 50, r: 70, b: 50, t: 50, pad: 2
+                    // },
+                    xaxis: {title: 'Timestamp'},
+                    yaxis: {title: 'Price'},
+                    yaxis2 : {
+                        title: 'Hidden Order',
+                        overlaying: 'y',
+                        side: 'right'
+                    }
+                }
 
-                Plotly.newPlot('hidden-timestamp-chart', data3, layout3);
+                Plotly.plot('hidden-timestamp-chart', data3, layout3);
                 // console.log(data2);
             });
         }

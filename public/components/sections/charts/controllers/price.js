@@ -23,7 +23,7 @@
                 var tmpData = res.data;
                 for (var obj of tmpData) {
                     $scope.graphData.x.push(obj.isoDate);
-                    $scope.graphData.y.push(obj.close);                
+                    $scope.graphData.y.push(obj.open);
                 }
     
                 $scope.graphPlots = [$scope.graphData];
@@ -52,7 +52,7 @@
                     var tmpData = res.data;
                     for (var obj of tmpData) {
                         $scope.graphData.x.push(obj.isoDate);
-                        $scope.graphData.y.push(obj.close);
+                        $scope.graphData.y.push(obj.open);
                     }
     
                     $scope.graphPlots = [$scope.graphData];

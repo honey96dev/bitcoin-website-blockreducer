@@ -1,7 +1,11 @@
-var Q = require('q');
-var _ = require('lodash');
-var config = require('../../_core/config');
-var dbConn = require('../../_core/dbConn');
+const Q = require('q');
+const _ = require('lodash');
+const config = require('../../_core/config');
+const dbConn = require('../../_core/dbConn');
+const sprintfJs = require('sprintf-js');
+
+const sprintf = sprintfJs.sprintf,
+    vsprintf = sprintfJs.vsprintf;
 
 /**
  *  Define services
@@ -51,12 +55,40 @@ function GetMaxIsoDate(callback) {
 
 function GetCustomizeData (startTime, endTime, callback) {
     var deferred = Q.defer();
-    var selectSql = 'SELECT `timestamp` `isoDate`, `close` FROM `bitmex_data_5m` WHERE `timestamp` BETWEEN ? AND ? ORDER BY `timestamp`;';
-    dbConn.query(selectSql, [startTime, endTime], function(error, results, fields) {
-        if (error) {            
-            deferred.reject("Error!");
-        }
+    //
+    // let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", binSize);
+    // dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
+    //     if (error) {
+    //         console.log(error);
+    //     }
+    //     const cnt = results[0].count;
+    //     const step = cnt / config.hiddenChartEntryNum;
+    //     sql = 'SELECT `timestamp` `isoDate`, `open` FROM `bitmex_data_5m` WHERE `timestamp` BETWEEN ? AND ? ORDER BY `timestamp`;';
+    //     dbConn.query(sql, [startTime, endTime], function (error, results, fields) {
+    //         if (error) {
+    //             deferred.reject("Error!");
+    //         }
+    //
+    //         callback(results);
+    //     });
+    // });
+    let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
+    dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
+        if (error) { console.log(error); }
+        const cnt = results[0].count;
+        const step = cnt / config.hiddenChartEntryNum;
 
-        callback(results);
+        // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
+        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open` " +
+            "FROM (SELECT `timestamp`, `open` FROM bitmex_data_5m_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, " +
+            "(SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
+        console.log('GetCutomizePrice', sql);
+        dbConn.query(sql, null, function(error, results, fields) {
+            if (error) {
+                deferred.reject("Error!");
+            }
+
+            callback(results);
+        });
     });
 }

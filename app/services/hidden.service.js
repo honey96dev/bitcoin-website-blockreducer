@@ -25,21 +25,17 @@ function GetLast1DayHidden() {
             startTime = new Date(new Date().getTime() - 86400000).toISOString();
         }
         GetCutomizePrice (startTime, endTime, '1m', function(callback) {
-            // let tmp = [{timestamp: startTime, open: 0}];
-            // tmp = tmp.concat(callback);
-            // tmp = tmp.concat({timestamp: endTime, open: 0});
-            callback.splice(0, 0, {timestamp: startTime, open: null});
-            callback.push({timestamp: endTime, open: null});
-            // console.log(tmp);
+            // callback.splice(0, 0, {timestamp: startTime, open: null});
+            // callback.push({timestamp: endTime, open: null});
             tmpDataArray.push(callback);
 
             GetCustomizeData(startTime, endTime, '1m', 'Buy', function(callback) {
-                callback.splice(0, 0, {timestamp: startTime, price: null});
-                callback.push({timestamp: endTime, price: null});
+                // callback.splice(0, 0, {timestamp: startTime, price: null});
+                // callback.push({timestamp: endTime, price: null});
                 tmpDataArray.push(callback);
                 GetCustomizeData (startTime, endTime, '1m', 'Sell', function(callback) {
-                    callback.splice(0, 0, {timestamp: startTime, price: null});
-                    callback.push({timestamp: endTime, price: null});
+                    // callback.splice(0, 0, {timestamp: startTime, price: null});
+                    // callback.push({timestamp: endTime, price: null});
                     tmpDataArray.push(callback);
 
                     deferred.resolve(_.add(tmpDataArray));
@@ -70,17 +66,17 @@ function GetLast1YearHidden() {
             // startTime = new Date(new Date().getTime() - 30 * 86400000).toISOString();
         }
         GetCutomizePrice (startTime, endTime, '1h', function(callback) {
-            callback.splice(0, 0, {timestamp: startTime, open: null});
-            callback.push({timestamp: endTime, open: null});
+            // callback.splice(0, 0, {timestamp: startTime, open: null});
+            // callback.push({timestamp: endTime, open: null});
             tmpDataArray.push(callback);
 
             GetCustomizeData(startTime, endTime, '1h', 'Buy', function(callback) {
-                callback.splice(0, 0, {timestamp: startTime, price: null});
-                callback.push({timestamp: endTime, price: null});
+                // callback.splice(0, 0, {timestamp: startTime, price: null});
+                // callback.push({timestamp: endTime, price: null});
                 tmpDataArray.push(callback);
                 GetCustomizeData (startTime, endTime, '1h', 'Sell', function(callback) {
-                    callback.splice(0, 0, {timestamp: startTime, price: null});
-                    callback.push({timestamp: endTime, price: null});
+                    // callback.splice(0, 0, {timestamp: startTime, price: null});
+                    // callback.push({timestamp: endTime, price: null});
                     tmpDataArray.push(callback);
 
                     deferred.resolve(_.add(tmpDataArray));
@@ -111,24 +107,54 @@ function GetMaxIsoDate(binSize, callback) {
 
 
 function GetCustomizeData (startTime, endTime, binSize, side, callback) {
-    var deferred = Q.defer();
-    var selectSql = sprintf("SELECT CONCAT(`%s`, '%s') `timestamp`, SUM(%s(`price`)) `price` FROM `hidden_orders_view` WHERE `timestamp` BETWEEN ? AND ? AND `side` = '%s' GROUP BY `%s` ORDER BY `timestamp`;", (binSize == '1m' ? 'timestamp1' : 'timestamp2'), (binSize == '1m' ? '5:00.000Z' : 'T12:00:00.000Z'), (side == 'Buy' ? '' : '-'), side, (binSize == '1m' ? 'timestamp1' : 'timestamp2'));
-    console.log('GetCustomizeData', selectSql);
-    dbConn.query(selectSql, [startTime, endTime], function(error, results, fields) {
-        if (error) {            
+    let deferred = Q.defer();
+    let sql = sprintf("SELECT `timestamp`, SUM(`price`) `price` FROM (SELECT CONCAT(`%s`, '%s') `timestamp`, %s`price` `price` FROM `hidden_orders_view` WHERE `timestamp` BETWEEN '%s' AND '%s' AND `side` = '%s' GROUP BY `trdMatchID` ) `tmp` GROUP BY `timestamp` ORDER BY `timestamp`;", (binSize == '1m' ? 'timestamp1' : 'timestamp2'), (binSize == '1m' ? '5:00.000Z' : 'T12:00:00.000Z'), (side == 'Buy' ? '' : '-'), startTime, endTime, side);
+    console.log('GetCustomizeData', sql);
+    dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
+        if (error) {
             deferred.reject("Error!");
         }
 
         callback(results);
     });
+
+    // var deferred = Q.defer();
+    //
+    // let sql = sprintf("SELECT COUNT(`id`) `count` FROM `hidden_orders_view` WHERE `timestamp` BETWEEN ? AND ?", binSize);
+    // dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
+    //     if (error) {
+    //         console.log(error);
+    //     }
+    //     const cnt = results[0].count;
+    //     const step = cnt / config.hiddenChartEntryNum;
+    //     sql = sprintf("SELECT `timestamp`, SUM(`price`) `price` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `price` FROM (SELECT `timestamp`, (-(`price`)) `price`  FROM hidden_orders_view WHERE `timestamp` BETWEEN '%s' AND '%s' GROUP BY `trdMatchID` ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num` ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
+    //     console.log('GetCustomizeData', sql);
+    //     dbConn.query(sql, [startTime, endTime], function (error, results, fields) {
+    //         if (error) {
+    //             deferred.reject("Error!");
+    //         }
+    //
+    //         callback(results);
+    //     });
+    // });
 }
 
 function GetCutomizePrice(startTime, endTime, binSize, callback) {
-    var selectSql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
-    console.log('GetCutomizePrice', selectSql);
-    dbConn.query(selectSql, [startTime, endTime], function(error, results, fields) {
+    let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", binSize);
+    dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
+        const cnt = results[0].count;
+        const step = cnt / config.hiddenChartEntryNum;
 
-        callback(results);
+        // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
+        sql = sprintf("SELECT `timestamp`, AVG(`open`) `open` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open` " +
+            "FROM (SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, " +
+            "(SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, binSize, startTime, endTime);
+        console.log('GetCutomizePrice', sql);
+        dbConn.query(sql, null, function(error, results, fields) {
+            if (error) { console.log(error); }
+
+            callback(results);
+        });
     });
 }
