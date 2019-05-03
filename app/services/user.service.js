@@ -228,7 +228,7 @@ function UpdatePassword(_id, hash, callback) {
 function GetAllUsers() {
     var deferred = Q.defer();
     FindAllUser(function(callback) {
-        if (callback.length > 0) {
+        if (callback != null && callback.length > 0) {
             deferred.resolve(_.add(callback));
             
         } else {
