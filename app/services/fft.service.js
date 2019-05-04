@@ -2,6 +2,11 @@ var Q = require('q');
 var _ = require('lodash');
 var config = require('../../_core/config');
 var dbConn = require('../../_core/dbConn');
+var Fili = require('fili');
+const sprintfJs = require('sprintf-js');
+
+const sprintf = sprintfJs.sprintf,
+    vsprintf = sprintfJs.vsprintf;
 
 /**
  *  Define services
@@ -19,19 +24,82 @@ module.exports = service;
 var arrayEstimate = [];
 
 /**
- * 
- * @param {*} req 
- * @param {*} res 
+ *
+ * @param {*} req
+ * @param {*} res
  */
 function GetLast1MonthFFT(req, res) {
     var deferred = Q.defer();
     GetMaxIsoDate(function(callback) {
         var endTime = callback.max;
-        var startTime = new Date(new Date(endTime).getTime() - 2592000000).toISOString();
-        var selectSql = 'SELECT * FROM price_5m_tbl WHERE isoDate BETWEEN ? AND ?';
+        // var startTime = new Date(new Date(endTime).getTime() - 2592000000).toISOString();
+        var startTime = new Date(new Date(endTime));
+        startTime.setFullYear(startTime.getFullYear() - 4);
+        startTime = startTime.toISOString();
+        // var selectSql = 'SELECT * FROM bitmex_data_5m_view WHERE isoDate BETWEEN ? AND ?';
 
-        GetCustomizeData(selectSql, startTime, endTime, function(callback) {
-            deferred.resolve(_.add(callback));
+        // GetCustomizeData(selectSql, startTime, endTime, function(callback) {
+        //     deferred.resolve(_.add(callback));
+        // });
+        let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
+        dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
+            if (error) { console.log(error); }
+            const cnt = results[0].count;
+            const step = cnt / config.hiddenChartEntryNum;
+
+            // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
+            sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`high`) `high`, AVG(`low`) `low`, AVG(`close`) `close` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `high`, `low`, `close` FROM (SELECT `timestamp`, `open`, `high`, `low`, `close` FROM bitmex_data_5m_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
+            console.log('GetCutomizePrice', sql);
+            dbConn.query(sql, null, function(error, results, fields) {
+                if (error) { console.log(error); }
+
+                let buffer = [];
+                for (let item of results) {
+                    buffer.push((parseFloat(item.high) - parseFloat(item.low)) / parseFloat(item.close));
+                }
+
+                var iirCalculator = new Fili.CalcCascades();
+
+                var lowpassFilterCoeffs = iirCalculator.lowpass({
+                    order: 3, // cascade 3 biquad filters (max: 12)
+                    characteristic: 'butterworth',
+                    Fs: 800, // sampling frequency
+                    Fc: 80, // cutoff frequency / center frequency for bandpass, bandstop, peak
+                    BW: 1, // bandwidth only for bandstop and bandpass filters - optional
+                    gain: 0, // gain for peak, lowshelf and highshelf
+                    preGain: false // adds one constant multiplication for highpass and lowpass
+                    // k = (1 + cos(omega)) * 0.5 / k = 1 with preGain == false
+                });
+
+                var iirLowpassFilter = new Fili.IirFilter(lowpassFilterCoeffs);
+
+                let lowPass = iirLowpassFilter.multiStep(buffer);
+
+                var highpassFilterCoeffs = iirCalculator.highpass({
+                    order: 3, // cascade 3 biquad filters (max: 12)
+                    characteristic: 'butterworth',
+                    Fs: 800, // sampling frequency
+                    Fc: 80, // cutoff frequency / center frequency for bandpass, bandstop, peak
+                    BW: 1, // bandwidth only for bandstop and bandpass filters - optional
+                    gain: 0, // gain for peak, lowshelf and highshelf
+                    preGain: false // adds one constant multiplication for highpass and lowpass
+                    // k = (1 + cos(omega)) * 0.5 / k = 1 with preGain == false
+                });
+
+                var iirHighpassFilter = new Fili.IirFilter(highpassFilterCoeffs);
+                let highPass = iirHighpassFilter.multiStep(buffer);
+
+                buffer = [];
+                for (let i in results) {
+                    buffer.push({
+                        isoDate: results[i].isoDate,
+                        open: results[i].open,
+                        lowPass: lowPass[i],
+                        highPass: highPass[i],
+                    });
+                }
+                deferred.resolve(_.add(buffer));
+            });
         });
     });
 
@@ -40,14 +108,14 @@ function GetLast1MonthFFT(req, res) {
 
 function GetDataByCandle(candle, startTime, endTime) {
     var deferred = Q.defer();
-    var selectSql = 'SELECT MAX(id) as id, MAX(isoDate) AS isoDate ,symbol, MAX(`open`) as open , MAX(high) as high ,MIN(low) as low, MIN(`close`) as close FROM `price_5m_tbl` WHERE isoDate BETWEEN ? AND ? ';
+    var selectSql = 'SELECT MAX(id) as id, MAX(isoDate) AS isoDate ,symbol, MAX(`open`) as open , MAX(high) as high ,MIN(low) as low, MIN(`close`) as close FROM `bitmex_data_5m_view` WHERE isoDate BETWEEN ? AND ? ';
     var insertSql = 'INSERT INTO candle_tmp SET ?';
     var deleteSql = 'TRUNCATE TABLE candle_tmp';
 
     dbConn.query(deleteSql, function(error, results, fields) {
         if (error) {console.log(error); }
         switch (parseInt(candle)) {
-            case 1: 
+            case 1:
                 selectSql += 'GROUP BY isoDate  ORDER BY id';
                 GetCustomizeData(selectSql, startTime, endTime, function(callback) {
                     deferred.resolve(_.add(callback));
@@ -121,7 +189,7 @@ function GetDataByCandle(candle, startTime, endTime) {
                 break;
         }
     });
-  
+
     return deferred.promise;
 }
 
@@ -194,13 +262,13 @@ function GetEstimateFFT(data) {
                                     });
                                 }
                                 arrayEstimate = [];
-                                
+
                                 deferred.resolve(_.add(tempArrayData));
                                 tempArrayData = [];
-                                
+
                             });
                         } else {
-                            deferred.reject('There is null');      
+                            deferred.reject('There is null');
                         }
                     });
                 });
@@ -211,7 +279,7 @@ function GetEstimateFFT(data) {
 }
 
 function GetLastTrade(callback) {
-    var selectSql= 'SELECT * FROM `price_5m_tbl` ORDER BY isoDate  DESC LIMIT 0 , 1';
+    var selectSql= 'SELECT * FROM `bitmex_data_5m_view` ORDER BY isoDate  DESC LIMIT 0 , 1';
     dbConn.query(selectSql, function(error, results, fields) {
         if (error) { console.log(error); }
         callback(results);
@@ -263,7 +331,7 @@ function StoreEstimateRows(data, tmp, callback) {
 
 function Store3HourCandle(startTime, endTime, callback) {
     var deleteSql = 'TRUNCATE TABLE estimate_tmp';
-    var selectSql = 'SELECT MAX(id) as id, MAX(isoDate) AS isoDate ,symbol, MAX(`open`) as open , MAX(high) as high ,MIN(low) as low, MIN(`close`) as close FROM `price_5m_tbl` WHERE isoDate BETWEEN ? AND ?  GROUP BY LEFT(isoDate,13)  order by id ';
+    var selectSql = 'SELECT MAX(id) as id, MAX(isoDate) AS isoDate ,symbol, MAX(`open`) as open , MAX(high) as high ,MIN(low) as low, MIN(`close`) as close FROM `bitmex_data_5m_view` WHERE isoDate BETWEEN ? AND ?  GROUP BY LEFT(isoDate,13)  order by id ';
     var insertSql = 'INSERT INTO estimate_tmp SET ?';
 
     dbConn.query(deleteSql, function(error, results, fields) {
@@ -296,7 +364,7 @@ function Store3HourCandle(startTime, endTime, callback) {
                         if (error) { console.log(error); }
                     });
                 }
-    
+
                 callback(1);
             } else {
                 callback(0);
@@ -315,10 +383,10 @@ function Get3HourCandle(callback) {
 }
 
 function GetMaxIsoDate(callback) {
-    var selectSql = 'SELECT MAX(isoDate) AS max FROM price_5m_tbl';
+    var selectSql = 'SELECT MAX(isoDate) AS max FROM bitmex_data_5m_view';
 
     dbConn.query(selectSql, function(error, results, fields) {
-        if (error) {            
+        if (error) {
             console.log(error);
         }
 
@@ -328,7 +396,7 @@ function GetMaxIsoDate(callback) {
 
 function GetCustomizeData (selectSql, startTime, endTime, callback) {
     dbConn.query(selectSql, [startTime, endTime], function(error, results, fields) {
-        if (error) {            
+        if (error) {
             deferred.reject("Error!");
         }
         callback(results);
