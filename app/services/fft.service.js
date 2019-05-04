@@ -98,6 +98,7 @@ function GetLast1MonthFFT(req, res) {
                 //         highPass: highPass[i],
                 //     });
                 // }
+                results.pop();
                 deferred.resolve(_.add(results));
             });
         });

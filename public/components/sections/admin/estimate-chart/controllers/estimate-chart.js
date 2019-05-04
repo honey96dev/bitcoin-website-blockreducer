@@ -116,7 +116,6 @@
                         side: 'right'
                     }
                 };
-
                 Plotly.newPlot('plotly-div', data1, layout1);
 
 
@@ -151,6 +150,7 @@
                     }
                 };
 
+                console.log(data2);
                 Plotly.newPlot('myFFTDiv', data2, layout2);
 
                 // var data2 = [$scope.trace2];
