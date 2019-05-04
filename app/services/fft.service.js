@@ -4,7 +4,6 @@ var config = require('../../_core/config');
 var dbConn = require('../../_core/dbConn');
 var Fili = require('fili');
 const sprintfJs = require('sprintf-js');
-
 const sprintf = sprintfJs.sprintf,
     vsprintf = sprintfJs.vsprintf;
 
