@@ -40,12 +40,12 @@
         };
 
         $scope.arrayCandles = [
-            {id : 1, value: "5 Minute"}, 
-            {id: 2, value: "10 Minute"}, 
-            {id: 3, value: "30 Minute"}, 
-            {id: 4, value: "1 Hour"}, 
-            {id: 5, value: "3 Hour"}, 
-            {id: 6, value: "1 Day"}
+            {id: '5m', value: "5 Minute"},
+            // {id: 2, value: "10 Minute"},
+            // {id: 3, value: "30 Minute"},
+            {id: '1h', value: "1 Hour"},
+            // {id: 5, value: "3 Hour"},
+            // {id: 6, value: "1 Day"}
         ];
      
         initcontroller();

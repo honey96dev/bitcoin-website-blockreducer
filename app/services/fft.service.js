@@ -48,57 +48,57 @@ function GetLast1MonthFFT(req, res) {
             const step = cnt / config.hiddenChartEntryNum;
 
             // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
-            sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`high`) `high`, AVG(`low`) `low`, AVG(`close`) `close` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `high`, `low`, `close` FROM (SELECT `timestamp`, `open`, `high`, `low`, `close` FROM bitmex_data_5m_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
+            sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `lowPass`, `highPass` FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM bitmex_data_5m_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
             console.log('GetCutomizePrice', sql);
             dbConn.query(sql, null, function(error, results, fields) {
                 if (error) { console.log(error); }
 
-                let buffer = [];
-                for (let item of results) {
-                    buffer.push((parseFloat(item.high) - parseFloat(item.low)) / parseFloat(item.close));
-                }
-
-                var iirCalculator = new Fili.CalcCascades();
-
-                var lowpassFilterCoeffs = iirCalculator.lowpass({
-                    order: 3, // cascade 3 biquad filters (max: 12)
-                    characteristic: 'butterworth',
-                    Fs: 800, // sampling frequency
-                    Fc: 80, // cutoff frequency / center frequency for bandpass, bandstop, peak
-                    BW: 1, // bandwidth only for bandstop and bandpass filters - optional
-                    gain: 0, // gain for peak, lowshelf and highshelf
-                    preGain: false // adds one constant multiplication for highpass and lowpass
-                    // k = (1 + cos(omega)) * 0.5 / k = 1 with preGain == false
-                });
-
-                var iirLowpassFilter = new Fili.IirFilter(lowpassFilterCoeffs);
-
-                let lowPass = iirLowpassFilter.multiStep(buffer);
-
-                var highpassFilterCoeffs = iirCalculator.highpass({
-                    order: 3, // cascade 3 biquad filters (max: 12)
-                    characteristic: 'butterworth',
-                    Fs: 800, // sampling frequency
-                    Fc: 80, // cutoff frequency / center frequency for bandpass, bandstop, peak
-                    BW: 1, // bandwidth only for bandstop and bandpass filters - optional
-                    gain: 0, // gain for peak, lowshelf and highshelf
-                    preGain: false // adds one constant multiplication for highpass and lowpass
-                    // k = (1 + cos(omega)) * 0.5 / k = 1 with preGain == false
-                });
-
-                var iirHighpassFilter = new Fili.IirFilter(highpassFilterCoeffs);
-                let highPass = iirHighpassFilter.multiStep(buffer);
-
-                buffer = [];
-                for (let i in results) {
-                    buffer.push({
-                        isoDate: results[i].isoDate,
-                        open: results[i].open,
-                        lowPass: lowPass[i],
-                        highPass: highPass[i],
-                    });
-                }
-                deferred.resolve(_.add(buffer));
+                // let buffer = [];
+                // for (let item of results) {
+                //     buffer.push((parseFloat(item.high) - parseFloat(item.low)) / parseFloat(item.close));
+                // }
+                //
+                // var iirCalculator = new Fili.CalcCascades();
+                //
+                // var lowpassFilterCoeffs = iirCalculator.lowpass({
+                //     order: 3, // cascade 3 biquad filters (max: 12)
+                //     characteristic: 'butterworth',
+                //     Fs: 800, // sampling frequency
+                //     Fc: 80, // cutoff frequency / center frequency for bandpass, bandstop, peak
+                //     BW: 1, // bandwidth only for bandstop and bandpass filters - optional
+                //     gain: 0, // gain for peak, lowshelf and highshelf
+                //     preGain: false // adds one constant multiplication for highpass and lowpass
+                //     // k = (1 + cos(omega)) * 0.5 / k = 1 with preGain == false
+                // });
+                //
+                // var iirLowpassFilter = new Fili.IirFilter(lowpassFilterCoeffs);
+                //
+                // let lowPass = iirLowpassFilter.multiStep(buffer);
+                //
+                // var highpassFilterCoeffs = iirCalculator.highpass({
+                //     order: 3, // cascade 3 biquad filters (max: 12)
+                //     characteristic: 'butterworth',
+                //     Fs: 800, // sampling frequency
+                //     Fc: 80, // cutoff frequency / center frequency for bandpass, bandstop, peak
+                //     BW: 1, // bandwidth only for bandstop and bandpass filters - optional
+                //     gain: 0, // gain for peak, lowshelf and highshelf
+                //     preGain: false // adds one constant multiplication for highpass and lowpass
+                //     // k = (1 + cos(omega)) * 0.5 / k = 1 with preGain == false
+                // });
+                //
+                // var iirHighpassFilter = new Fili.IirFilter(highpassFilterCoeffs);
+                // let highPass = iirHighpassFilter.multiStep(buffer);
+                //
+                // buffer = [];
+                // for (let i in results) {
+                //     buffer.push({
+                //         isoDate: results[i].isoDate,
+                //         open: results[i].open,
+                //         lowPass: lowPass[i],
+                //         highPass: highPass[i],
+                //     });
+                // }
+                deferred.resolve(_.add(results));
             });
         });
     });
@@ -107,17 +107,20 @@ function GetLast1MonthFFT(req, res) {
 }
 
 
-function GetCustomizeFFT(startTime, endTime) {
+function GetCustomizeFFT(candle, startTime, endTime) {
     var deferred = Q.defer();
 
-    let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
+    if (candle == null || candle.length === 0) {
+        candle = '5m';
+    }
+    let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", candle);
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
         const cnt = results[0].count;
         const step = cnt / config.hiddenChartEntryNum;
 
         // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
-        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`high`) `high`, AVG(`low`) `low`, AVG(`close`) `close` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `high`, `low`, `close` FROM (SELECT `timestamp`, `open`, `high`, `low`, `close` FROM bitmex_data_5m_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
+        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`high`) `high`, AVG(`low`) `low`, AVG(`close`) `close` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `high`, `low`, `close` FROM (SELECT `timestamp`, `open`, `high`, `low`, `close` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, candle, startTime, endTime);
         console.log('GetCutomizePrice', sql);
         dbConn.query(sql, null, function(error, results, fields) {
             if (error) { console.log(error); }
