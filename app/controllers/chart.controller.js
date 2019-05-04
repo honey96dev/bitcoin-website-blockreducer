@@ -109,7 +109,19 @@ function GetDataByCandle(req, res) {
     var startTime = (new Date( req.body.inputData.startTime)).toISOString();
     var endTime = (new Date(req.body.inputData.endTime)).toISOString();
     var candle = req.body.inputData.candle;
-    fftService.GetDataByCandle(candle, startTime, endTime)
+    // fftService.GetDataByCandle(candle, startTime, endTime)
+    //     .then(function(data) {
+    //         if(data) {
+    //             res.json(data);
+    //         } else {
+    //             res.sendStatus(404);
+    //         }
+    //     })
+    //     .catch(function(error) {
+    //         res.status(400).send(error);
+    //     });
+
+    fftService.GetCustomizeFFT(startTime, endTime)
         .then(function(data) {
             if(data) {
                 res.json(data);

@@ -96,7 +96,7 @@
                     //     b: 40,
                     //     l: 60
                     // },
-                    showlegend: true,
+                    showlegend: false,
                     xaxis: {
                         autorange: true,
                         rangeslider: {},
@@ -130,7 +130,7 @@
                     //     b: 40,
                     //     l: 60
                     // },
-                    showlegend: true,
+                    showlegend: false,
                     xaxis: {
                         autorange: true,
                         rangeslider: {},
@@ -280,33 +280,41 @@
                 var tmpData = res.data;
 
                 $scope.trace1.x = [];
-                $scope.trace1.close = [];
-                $scope.trace1.high = [];
-                $scope.trace1.low = [];
-                $scope.trace1.open = [];
+                $scope.trace1.y = [];
+                // $scope.trace1.close = [];
+                // $scope.trace1.high = [];
+                // $scope.trace1.low = [];
+                // $scope.trace1.open = [];
                 $scope.trace2.x = [];
                 $scope.trace2.y = [];
-
-                for (var obj of tmpData) {
-                    $scope.trace1.x.push(obj.isoDate);
-                    $scope.trace1.open.push(obj.open);
-                    $scope.trace1.high.push(obj.high);
-                    $scope.trace1.low.push(obj.low);
-                    $scope.trace1.close.push(obj.close);
-                    $scope.trace2.x.push(obj.isoDate);
-                    $scope.trace2.y.push((obj.high - obj.low) / obj.close);                
+                $scope.trace3.x = [];
+                $scope.trace3.y = [];
+                // console.log(tmpData);
+                for (var item of tmpData) {
+                    $scope.trace1.x.push(item.isoDate);
+                    $scope.trace1.y.push(item.open);
+                    // $scope.trace1.open.push(obj.open);
+                    // $scope.trace1.high.push(obj.high);
+                    // $scope.trace1.low.push(obj.low);
+                    // $scope.trace1.close.push(obj.close);
+                    $scope.trace2.x.push(item.isoDate);
+                    // $scope.trace2.y.push((obj.high - obj.low) / obj.close);
+                    $scope.trace2.y.push(item.lowPass);
+                    $scope.trace3.x.push(item.isoDate);
+                    // $scope.trace2.y.push((obj.high - obj.low) / obj.close);
+                    $scope.trace3.y.push(item.highPass);
                 }
-                
-                var data = [$scope.trace1, $scope.trace2];
-                
-                var layout = {
+
+                var data1 = [$scope.trace1, $scope.trace2];
+
+                var layout1 = {
                     dragmode: 'zoom',
-                    margin: {
-                        r: 10,
-                        t: 25,
-                        b: 40,
-                        l: 60
-                    },
+                    // margin: {
+                    //     r: 10,
+                    //     t: 25,
+                    //     b: 40,
+                    //     l: 60
+                    // },
                     showlegend: false,
                     xaxis: {
                         autorange: true,
@@ -315,12 +323,12 @@
                         type: 'date'
                     },
                     yaxis: {
-                        title: 'yaxis title',
+                        title: 'Price',
                         autorange: true,
                         type: 'linear'
                     },
                     yaxis2: {
-                        title: 'yaxis2 title',
+                        title: 'Low Pass',
                         titlefont: {color: 'rgb(148, 103, 189)'},
                         tickfont: {color: 'rgb(148, 103, 189)'},
                         overlaying: 'y',
@@ -328,20 +336,54 @@
                     }
                 };
 
-                Plotly.newPlot('plotly-div', data, layout);
+                Plotly.newPlot('plotly-div', data1, layout1);
 
-                var data2 = [$scope.trace2];
+
+                var data2 = [$scope.trace1, $scope.trace3];
 
                 var layout2 = {
+                    dragmode: 'zoom',
+                    // margin: {
+                    //     r: 10,
+                    //     t: 25,
+                    //     b: 40,
+                    //     l: 60
+                    // },
+                    showlegend: false,
+                    xaxis: {
+                        autorange: true,
+                        rangeslider: {},
+                        title: 'Date',
+                        type: 'date'
+                    },
                     yaxis: {
-                      title: 'yaxis2 title',
-                      titlefont: {color: 'rgb(148, 103, 189)'},
-                      tickfont: {color: 'rgb(148, 103, 189)'},
-                      overlaying: 'y',
-                      side: 'right'
+                        title: 'Price',
+                        autorange: true,
+                        type: 'linear'
+                    },
+                    yaxis2: {
+                        title: 'High Pass',
+                        // titlefont: {color: 'rgb(148, 103, 189)'},
+                        // tickfont: {color: 'rgb(148, 103, 189)'},
+                        overlaying: 'y',
+                        side: 'right'
                     }
                 };
+
                 Plotly.newPlot('myFFTDiv', data2, layout2);
+
+                // var data2 = [$scope.trace2];
+
+                // var layout2 = {
+                //     yaxis: {
+                //       title: 'yaxis2 title',
+                //       titlefont: {color: 'rgb(148, 103, 189)'},
+                //       tickfont: {color: 'rgb(148, 103, 189)'},
+                //       overlaying: 'y',
+                //       side: 'right'
+                //     }
+                // };
+                // Plotly.newPlot('myFFTDiv', data2, layout2);
            
             });
         };
