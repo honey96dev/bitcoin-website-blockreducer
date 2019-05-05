@@ -83,6 +83,15 @@
                 // data: { activeTab: 'fftChart' }
             })
 
+            .state('fft-chart2', {
+                url: '/fft_chat2',
+                templateUrl: './components/sections/fft-chart/views/fft-chart.html',
+                // templateUrl: './components/sections/admin/estimate-chart/views/estimate-chart.html',
+                controller: 'FFTChart2Controller',
+                controllerAs: 'vm',
+                // data: { activeTab: 'fftChart' }
+            })
+
             .state('admin', {
                 url: '/admin',
                 templateUrl: './components/sections/admin/main/views/main.html',
