@@ -108,7 +108,7 @@ function GetMaxIsoDate(binSize, callback) {
 
 function GetCustomizeData (startTime, endTime, binSize, side, callback) {
     let deferred = Q.defer();
-    let sql = sprintf("SELECT `timestamp`, SUM(`price`) `price` FROM (SELECT CONCAT(`%s`, '%s') `timestamp`, %s`price` `price` FROM `hidden_orders_view` WHERE `timestamp` BETWEEN '%s' AND '%s' AND `side` = '%s' GROUP BY `trdMatchID` ) `tmp` GROUP BY `timestamp` ORDER BY `timestamp`;", (binSize == '1m' ? 'timestamp1' : 'timestamp2'), (binSize == '1m' ? '5:00.000Z' : 'T12:00:00.000Z'), (side == 'Buy' ? '' : '-'), startTime, endTime, side);
+    let sql = sprintf("SELECT `timestamp`, SUM(`price`) `price` FROM (SELECT CONCAT(`%s`, '%s') `timestamp`, %s`price` `price` FROM `hidden_orders_view` WHERE `timestamp` BETWEEN '%s' AND '%s' AND `side` = '%s') `tmp` GROUP BY `timestamp` ORDER BY `timestamp`;", (binSize == '1m' ? 'timestamp1' : 'timestamp2'), (binSize == '1m' ? '5:00.000Z' : 'T12:00:00.000Z'), (side == 'Buy' ? '' : '-'), startTime, endTime, side);
     console.log('GetCustomizeData', sql);
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) {
