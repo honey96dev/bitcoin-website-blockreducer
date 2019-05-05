@@ -47,7 +47,10 @@ service.GetLast1MonthFFT = function (req, res) {
             sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `lowPass`, `highPass` FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM bitmex_data_5m_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
             console.log('GetCutomizePrice', sql);
             dbConn.query(sql, null, function(error, results, fields) {
-                if (error) { console.log(error); }
+                if (error) {
+                    console.log(error);
+                    // res.send([]);
+                }
 
                 // let buffer = [];
                 // for (let item of results) {
@@ -94,7 +97,9 @@ service.GetLast1MonthFFT = function (req, res) {
                 //         highPass: highPass[i],
                 //     });
                 // }
-                results.pop();
+                if (results != null && results.length > 0){
+                    results.pop();
+                }
                 deferred.resolve(_.add(results));
             });
         });
