@@ -98,7 +98,7 @@ function GetMaxIsoDate(binSize, callback) {
             deferred.reject("Error!");
         }
         let timestamp = '';
-        if (results.length > 0) {
+        if (results && results.length > 0) {
             timestamp = results[0];
         }
         callback(timestamp);
