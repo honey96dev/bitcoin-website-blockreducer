@@ -17,6 +17,9 @@ router.route('/').get(function(req, res, next) {
  * Get data and render page to login page
  */
 router.route('/').post(function(req, res, next) {
+    if (req.body.invitationCode != '23900') {
+        return res.render('register', { error: 'Invitation Code is invalid' });
+    }
     request.post({
         url: config.client.url + '/users/register',
         form: req.body,
