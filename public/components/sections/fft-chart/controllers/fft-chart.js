@@ -96,7 +96,7 @@
                     //     b: 40,
                     //     l: 60
                     // },
-                    showlegend: false,
+                    showlegend: true,
                     xaxis: {
                         autorange: true,
                         rangeslider: {},
@@ -226,13 +226,13 @@
 
                         var layout = {
                             dragmode: 'zoom',
-                            margin: {
-                                r: 10,
-                                t: 25,
-                                b: 40,
-                                l: 60
-                            },
-                            showlegend: false,
+                            // margin: {
+                            //     r: 10,
+                            //     t: 25,
+                            //     b: 40,
+                            //     l: 60
+                            // },
+                            showlegend: true,
                             xaxis: {
                                 autorange: true,
                                 rangeslider: {},
@@ -315,7 +315,7 @@
                     //     b: 40,
                     //     l: 60
                     // },
-                    showlegend: false,
+                    showlegend: true,
                     xaxis: {
                         autorange: true,
                         rangeslider: {},
@@ -349,7 +349,7 @@
                     //     b: 40,
                     //     l: 60
                     // },
-                    showlegend: false,
+                    showlegend: true,
                     xaxis: {
                         autorange: true,
                         rangeslider: {},
