@@ -37,7 +37,7 @@ service.GetLast1MonthFFT = function (req, res) {
         // GetCustomizeData(selectSql, startTime, endTime, function(callback) {
         //     deferred.resolve(_.add(callback));
         // });
-        let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
+        let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
         dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
             if (error) { console.log(error); }
             const cnt = results[0].count;
@@ -110,7 +110,7 @@ service.GetCustomizeFFT = function (candle, startTime, endTime) {
     if (candle == null || candle.length === 0) {
         candle = '5m';
     }
-    let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", candle);
+    let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", candle);
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
         const cnt = results[0].count;

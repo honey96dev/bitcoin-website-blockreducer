@@ -69,7 +69,7 @@ function GetCutomizePrice(startTime, endTime, callback) {
     //
     //     callback(results);
     // });
-    let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
+    let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
         const cnt = results[0].count;
@@ -110,7 +110,7 @@ function GetCustomizeData (startTime, endTime, callback) {
     //     //console.log(results);
     //     callback(results);
     // });
-    let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
+    let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
         const cnt = results[0].count;

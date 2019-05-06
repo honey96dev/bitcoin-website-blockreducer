@@ -249,7 +249,7 @@ router.saveId0Service = function (interval) {
         if (results.result && results.result == 'error') {
             console.log('saveId0Service-error', interval);
         } else {
-            let sql = sprintf("SELECT COUNT(`id`) `count` FROM `id0_%s` WHERE `timestamp` = '%s';", interval, results.timestamp);
+            let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `id0_%s` WHERE `timestamp` = '%s';", interval, results.timestamp);
 
             dbConn.query(sql, null, (error, resultsNoUse, fields) => {
                 if (error) {

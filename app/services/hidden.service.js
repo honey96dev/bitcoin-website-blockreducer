@@ -140,7 +140,7 @@ function GetCustomizeData (startTime, endTime, binSize, side, callback) {
 }
 
 function GetCutomizePrice(startTime, endTime, binSize, callback) {
-    let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", binSize);
+    let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", binSize);
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
         const cnt = results[0].count;
