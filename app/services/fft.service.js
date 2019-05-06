@@ -7,16 +7,11 @@ const sprintfJs = require('sprintf-js');
 const sprintf = sprintfJs.sprintf,
     vsprintf = sprintfJs.vsprintf;
 
+
 /**
  *  Define services
  */
 var service = {};
-service.GetLast1MonthFFT = GetLast1MonthFFT;
-service.GetCustomizeFFT = GetCustomizeFFT;
-service.GetDataByCandle = GetDataByCandle;
-service.GetEstimateFFT = GetEstimateFFT;
-
-module.exports = service;
 
 /**
  * Global values
@@ -28,7 +23,8 @@ var arrayEstimate = [];
  * @param {*} req
  * @param {*} res
  */
-function GetLast1MonthFFT(req, res) {
+
+service.GetLast1MonthFFT = function (req, res) {
     var deferred = Q.defer();
     GetMaxIsoDate(function(callback) {
         var endTime = callback.max;
@@ -108,7 +104,7 @@ function GetLast1MonthFFT(req, res) {
 }
 
 
-function GetCustomizeFFT(candle, startTime, endTime) {
+service.GetCustomizeFFT = function (candle, startTime, endTime) {
     var deferred = Q.defer();
 
     if (candle == null || candle.length === 0) {
@@ -178,7 +174,8 @@ function GetCustomizeFFT(candle, startTime, endTime) {
     return deferred.promise;
 }
 
-function GetDataByCandle(candle, startTime, endTime) {
+
+service.GetDataByCandle = function (candle, startTime, endTime) {
     var deferred = Q.defer();
     var selectSql = 'SELECT MAX(id) as id, MAX(isoDate) AS isoDate ,symbol, MAX(`open`) as open , MAX(high) as high ,MIN(low) as low, MIN(`close`) as close FROM `bitmex_data_5m_view` WHERE isoDate BETWEEN ? AND ? ';
     var insertSql = 'INSERT INTO candle_tmp SET ?';
@@ -309,7 +306,8 @@ function GetCandleTempData (callback) {
 }
 
 //GetCustomizeData
-function GetEstimateFFT(data) {
+
+service.GetEstimateFFT = function (data) {
     var deferred = Q.defer();
     GetLastTrade(function(callback) {
         var tmp = callback[0];
@@ -474,3 +472,5 @@ function GetCustomizeData (selectSql, startTime, endTime, callback) {
         callback(results);
     });
 }
+
+module.exports = service;

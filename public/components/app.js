@@ -92,6 +92,15 @@
                 // data: { activeTab: 'fftChart' }
             })
 
+            .state('num100-chart', {
+                url: '/num100_chart',
+                templateUrl: './components/sections/num100/views/num100.html',
+                // templateUrl: './components/sections/admin/estimate-chart/views/estimate-chart.html',
+                controller: 'Num100ChartController',
+                controllerAs: 'vm',
+                // data: { activeTab: 'fftChart' }
+            })
+
             .state('admin', {
                 url: '/admin',
                 templateUrl: './components/sections/admin/main/views/main.html',

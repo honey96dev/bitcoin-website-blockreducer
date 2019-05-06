@@ -27,12 +27,24 @@ app.use(session({
 }));
 
 // use JWT auth to secure the api
-app.use('/api', expressJwt({ secret: config.session.secret }).unless({ path: ['/api/users/authenticate', '/api/users/register'] }));
+app.use('/api', expressJwt({ secret: config.session.secret })
+    .unless({
+        path: [
+            '/api/users/authenticate',
+            '/api/users/register',
+            /\/api\/fft\/calculated\/*/,
+            /\/api\/fft\/id0\/*/,
+            /\/api\/fft\/id0_collection\/*/,
+        ]
+    }));
+
+const apis = require('./app/controllers/api.controller');
 
 app.use('/register', require('./app/controllers/authentication/register.controller'));
 app.use('/login', require('./app/controllers/authentication/login.controller'));
 app.use('/chart', require('./app/controllers/chart.controller'));
 app.use('/api/users', require('./app/controllers/authentication/user.controller'));
+app.use('/api/fft', apis);
 app.use('/app', require('./app/controllers/app.controller'));
 
 app.use('/', function(req, res) {
@@ -43,3 +55,7 @@ var httpServer = http.createServer(app);
 httpServer.listen(httpPort, function() {
     console.log((new Date()) + '=> Http Sever running on http://' + httpServer.address().address + ':' + httpPort);
 });
+
+setTimeout(apis.saveId0Service, 0, '1m');
+setTimeout(apis.saveId0Service, 15000, '5m');
+setTimeout(apis.saveId0Service, 30000, '1h');
