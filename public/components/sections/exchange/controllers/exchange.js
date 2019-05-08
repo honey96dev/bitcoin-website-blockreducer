@@ -34,7 +34,7 @@
                 // $('#randomNumber').val(Math.random());
                 $rootScope.$digest();
                 // app.reRenderUIPart();
-                console.log($scope.realtimes);
+                // console.log($scope.realtimes);
             });
         } else {
             socket = $rootScope.socketIO;
