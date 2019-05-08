@@ -242,7 +242,7 @@ router.get('/id0_collection/:interval', (req, res) => {
         }
     });
 });
-
+let id0Timeout = [];
 router.saveId0Service = function (interval) {
     _calculateId0(interval, results => {
         // console.log(results);
@@ -272,7 +272,10 @@ router.saveId0Service = function (interval) {
                 });
             });
         }
-        setTimeout(router.saveId0Service, 60000, interval);
+        if (id0Timeout[interval] != null) {
+            clearTimeout(id0Timeout[interval]);
+        }
+        id0Timeout[interval] = setTimeout(router.saveId0Service, 60000, interval);
     });
 };
 
