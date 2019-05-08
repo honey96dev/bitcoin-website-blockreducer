@@ -200,6 +200,15 @@ router.get('/id0/:interval', (req, res) => {
 
 router.get('/id0_collection/:interval', (req, res) => {
     const interval = req.params.interval;
+    let startTime = req.query.startTime;
+    if (startTime && startTime.length > 0) {
+        startTime = (new Date(startTime)).toISOString();
+    }
+    let endTime = req.query.endTime;
+    if (endTime && endTime.length > 0) {
+        endTime = (new Date(endTime)).toISOString();
+    }
+    console.log(startTime, endTime);
     const acceptInterval = ['1m', '5m', '1h'];
     if (acceptInterval.indexOf(interval) === -1) {
         res.send({
@@ -208,8 +217,13 @@ router.get('/id0_collection/:interval', (req, res) => {
         });
         return;
     }
-    let sql = sprintf("SELECT * FROM (SELECT `timestamp`, `open`, `num_3`, `num_3i`, `num_6`, `num_6i`, `num_9`, `num_9i`, `num_100`, `num_100i` FROM `id0_%s` ORDER BY `timestamp` DESC LIMIT 2000) `sub` ORDER BY `timestamp` ASC;", interval);
-
+    let sql;
+    if (startTime && startTime.length > 0) {
+        sql = sprintf("SELECT * FROM (SELECT `timestamp`, `open`, `num_3`, `num_3i`, `num_6`, `num_6i`, `num_9`, `num_9i`, `num_100`, `num_100i` FROM `id0_%s` WHERE `timestamp` BETWEEN '%s' AND '%s' ORDER BY `timestamp` DESC LIMIT 2000) `sub` ORDER BY `timestamp` ASC;", interval, startTime, endTime);
+    } else {
+        sql = sprintf("SELECT * FROM (SELECT `timestamp`, `open`, `num_3`, `num_3i`, `num_6`, `num_6i`, `num_9`, `num_9i`, `num_100`, `num_100i` FROM `id0_%s` ORDER BY `timestamp` DESC LIMIT 2000) `sub` ORDER BY `timestamp` ASC;", interval);
+    }
+    console.log(sql);
     dbConn.query(sql, null, (error, results, fields) => {
         if (error) {
             console.log(error);

@@ -46,15 +46,21 @@ app.use('/chart', require('./app/controllers/chart.controller'));
 app.use('/api/users', require('./app/controllers/authentication/user.controller'));
 app.use('/api/fft', apis);
 app.use('/app', require('./app/controllers/app.controller'));
+app.use('/exchange', require('./exchange/app'));
 
 app.use('/', function(req, res) {
     return res.redirect('/app');
 });
 
 var httpServer = http.createServer(app);
+var io = require('socket.io')(httpServer);
+var cryptoMarkets = require('./exchange/routes/cryptoMarkets');
+cryptoMarkets.setSocketIO(io);
+
 httpServer.listen(httpPort, function() {
     console.log((new Date()) + '=> Http Sever running on http://' + httpServer.address().address + ':' + httpPort);
 });
+
 
 setTimeout(apis.saveId0Service, 0, '1m');
 setTimeout(apis.saveId0Service, 15000, '5m');

@@ -1,0 +1,163 @@
+<style>
+    th {
+        text-align: center;
+    }
+
+    td {
+        text-align: center;
+    }
+
+    i {
+        font-size: 20px !important;
+        font-weight: bold;
+    }
+
+    #mytable input {
+        width: 100%;
+    }
+
+    /*td {*/
+        /*max-width: 120px;*/
+        /*white-space: nowrap;*/
+        /*text-overflow: ellipsis;*/
+    /*}*/
+    table td {
+        word-break: break-word;
+        /*max-width: 120px;*/
+        /*white-space: nowrap;*/
+        text-overflow: ellipsis;
+    }
+    table th {
+        font-weight: 800 !important;
+    }
+</style>
+<section class="bootstrap snippet">
+    <div>
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 col-md-5 col-lg-6">
+                <div id="accordion">
+                    <div class="Exchanges">
+                        <div class="form">
+                            <form class="getMarketData">
+                                <!--<input id="randomNumber" type="text" ng-model="randomNumber">-->
+                                <div class="form-group row">
+                                    <div class="col-4">
+                                        <label for="symbolBox">Symbol:</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <input
+                                                ng-model="symbol"
+                                                id="symbolBox"
+                                                type="text"
+                                                name="symbolBox"
+                                                class="symbolInput form-control"
+                                                placeholder="Enter symbol here..."
+                                        />
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-4">
+                                        <label for="minPriceBox">Min Price:</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <input
+                                                ng-model="threshold"
+                                                id="minPriceBox"
+                                                type="text"
+                                                name="minPriceBox"
+                                                class="priceInput form-control"
+                                                placeholder="Min order size threshold..."
+                                        />
+                                    </div>
+
+                                </div>
+                                <div class="form-group row">
+                                    <div class="col-4">
+                                        <label for="limitRowBox">Limit Numbers:</label>
+                                    </div>
+                                    <div class="col-8">
+                                        <input
+                                                ng-model="limitCount"
+                                                id="limitRowBox"
+                                                type="text"
+                                                name="limitRowBox"
+                                                class="rowNumberInput form-control"
+                                                placeholder="Max numbers of row: >30"
+                                        />
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                        <div class="card">
+                            <div class="card-header text-right">
+                                <button class="btn btn-primary float-left" ng-click="submitSources()">Submit</button>
+                                <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                                    Click here to Show or Hide Exchange Data
+                                </a>
+                            </div>
+                            <!--<input type="checkbox" ng-model="isSee.m7" ng-change="toggleSourceId('7')"/>-->
+                            <div id="collapseOne" class="collapse show" data-parent="#accordion">
+                                <table id="source" class="table table-striped table-bordered hover" style="width:100%">
+                                    <thead>
+                                    <tr>
+                                        <th> ID </th>
+                                        <th>Symbol</th>
+                                        <th>Name</th>
+                                        <th>URL</th>
+                                        <th>State</th>
+                                        <th>See?</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr ng-repeat="item in sources">
+                                        <td>{{item.exchange_id}}</td>
+                                        <td>{{item.symbol}}</td>
+                                        <td>{{item.name}}</td>
+                                        <td>{{item.route}}</td>
+                                        <td>{{item.active == 1 ? 'Enabled' : 'Disabled'}}</td>
+                                        <td><input type="checkbox" ng-click="toggleSourceId(this)" data-id="{{item.name}}"></td>
+                                    </tr>
+                                    <!--<tr>-->
+                                        <!--<td>hljkl</td>-->
+                                        <!--<td>hjkljkhl</td>-->
+                                        <!--<td>hjkl</td>-->
+                                        <!--<td>hkjl</td>-->
+                                        <!--<td>jjj</td>-->
+                                        <!--<td>ooo</td>-->
+                                    <!--</tr>-->
+                                    </tbody>
+                                </table>
+                            </div>
+
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-7 col-lg-6">
+
+                <table id="realtimes" class="table table-striped table-bordered streamingTable" style="width:100%">
+                    <thead>
+                    <tr>
+                        <th>Marker</th>
+                        <th>Price</th>
+                        <th>Amount</th>
+                        <th>Timestamp</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="item in exchangeScope" class="{{item.class}}">
+                        <td>{{item.marketName}}</td>
+                        <td>{{item.price}}</td>
+                        <td>{{item.amount1}}</td>
+                        <td>{{item.date}}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</section>

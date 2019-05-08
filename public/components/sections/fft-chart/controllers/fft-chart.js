@@ -6,6 +6,7 @@
         .controller('FFTChart2Controller', Controller);
 
     function Controller($scope, $http, $window, $location, UserService) {
+
         $scope.trace1 = {
             x: [],
             y: [],
@@ -271,7 +272,6 @@
         };
 
         $scope.CustomizeChart = function(inputData) {
-            
             $http({
                 method: 'POST',
                 url: '/chart/fft/customize',

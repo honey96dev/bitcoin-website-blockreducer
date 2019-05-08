@@ -20,6 +20,16 @@
                                     </option>
                                 </select>
                             </div>
+                            <div class="start-time col-sm-3">
+                                <div class="input-group mb-0 pt-2">
+                                    <input ng-model="startTime" class="text-white form-control" datetime-picker date-format="yyyy-MM-dd HH:mm:ss" required>
+                                </div>
+                            </div>
+                            <div class="end-time col-sm-3">
+                                <div class="input-group mb-0 pt-2">
+                                    <input ng-model="endTime" class=" text-white form-control" datetime-picker date-format="yyyy-MM-dd HH:mm:ss" required>
+                                </div>
+                            </div>
                             <!--<div class="end-time col-sm-4">-->
                                 <!--<div class="input-group mb-12">-->
                                     <!--<input ng-model="endTime" class="form-control text-white" datetime-picker date-format="yyyy-MM-dd HH:mm:ss">-->
@@ -37,7 +47,7 @@
             <div class="card-body text-center col-sm-12">
                 <div align="center">
                     <!-- <line-plot graph-plots=graphPlots style="width:1000px; height: 700px;"></line-plot> -->
-                    <div id="plotly-div" style="width: 104%; height: 1500px; margin-left: -2%;"></div>
+                    <div id="plotly-div-num100" style="width: 104%; height: 1500px; margin-left: -2%;"></div>
                 </div>
             </div>
         </div>

@@ -1,0 +1,61 @@
+.streamingTable
+{
+    background-color: rgba(0, 0, 0, 0);
+    border-collapse: collapse;
+    border-spacing: 0;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 16px !important;
+}
+.streamingTable .streamingListRow td
+{
+    padding: 5px;
+    white-space: nowrap;
+    border-left: 1px solid #ddd;
+    text-align: right;
+}
+.streamingListRow
+{
+    border-top: 1px solid #bbb;
+}
+
+.streamingTable .Buy
+{
+    color: #4aa165;
+}
+.streamingTable tr.Dark.Buy
+{
+    color: white;
+    background-color: #4aa165;
+}
+.streamingTable .Sell
+{
+    color: #d16547;
+}
+.streamingTable tr.Dark.Sell
+{
+    color: white;
+    background-color: #d16547;
+}
+
+.streamingListRow:nth-child(odd) {
+    background: rgba(195,195,195,0.25);
+}
+.streamingListRow:nth-child(even) {
+    background: #fff;;
+}
+
+.symbolInput
+{
+    width: 100%;
+    margin-right: 5px;
+}
+.priceInput
+{
+    width: 100%;
+    margin-right: 5px;
+}
+.rowNumberInput
+{
+    width: 100%;
+    margin-right: 5px;
+}

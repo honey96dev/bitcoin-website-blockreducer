@@ -31,6 +31,7 @@
     "path": "^0.12.7",
     "q": "^1.5.1",
     "request": "^2.88.0",
+    "socket.io": "^2.2.0",
     "sprintf-js": "^1.1.2",
     "window-function": "^2.1.0"
   },

@@ -363,7 +363,7 @@
   }
   
   .page-wrapper .page-content > div {
-    padding: 20px 40px;
+    padding: 20px 20px 20px 0px;
   }
   
   .page-wrapper .page-content {
@@ -504,4 +504,3 @@
 
 
 
-  

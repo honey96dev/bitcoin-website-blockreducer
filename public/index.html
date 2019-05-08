@@ -10,9 +10,11 @@
         <link href="./assets/css/angularjs-datetime-picker.css" rel="stylesheet"/>
         <link href="./assets/css/ui-bootstrap-csp.css" rel="stylesheet">
         <link href="./assets/css/bootstrap-material-design.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css"/>
         <!-- End import core css files -->
         
         <link href="./components/_base/_style/custom.style.css" rel="stylesheet">
+        <link href="./assets/css/streaming-list.css" rel="stylesheet">
         <!-- Import favicon file -->
         <link rel="icon" type="image/x-icon" href="./favicon.ico">
     </head>
@@ -143,6 +145,12 @@
                                 </a>
                             </li>
                             <li>
+                                <a ui-sref="exchange" onmouseover="" >
+                                    <i class="fa fa-line-chart"></i>
+                                    <span>Exchange Information</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a ui-sref="account" onmouseover="" >
                                     <i class="fa fa-user"></i>
                                     <span> User account</span>
@@ -193,6 +201,9 @@
         <script src='./assets/js/jquery.min.js'></script>
         <script src='./assets/js/popper.min.js'></script>
         <script src='./assets/js/bootstrap-material-design.js'></script>
+        <!--<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js"></script>-->
+        <script type="text/javascript" src="./assets/js/socket.io.js"></script>
+        <script type="text/javascript" src="https://unpkg.com/axios/dist/axios.min.js"></script>
         <script src='./components/_base/_style/custom.style.js'></script>
         <!-- End import core javascript files -->
 
@@ -214,6 +225,7 @@
         <script src='./components/sections/hidden-order/controllers/hidden-year.js'></script>
         <script src='./components/sections/fft-chart/controllers/fft-chart.js'></script>
         <script src='./components/sections/num100/controllers/num100.js'></script>
+        <script src='./components/sections/exchange/controllers/exchange.js'></script>
         <script src='./components/sections/admin/main/controllers/main.js'></script>
         <script src='./components/sections/admin/users/controllers/users.js'></script>
         <script src='./components/sections/admin/estimate/controllers/estimate.js'></script>
