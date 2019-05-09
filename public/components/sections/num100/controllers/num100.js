@@ -5,7 +5,7 @@
         .module('BlockReducerApp')
         .controller('Num100ChartController', ['$rootScope', '$scope', '$http', '$window', Controller]);
 
-    function Controller($scope, $http, $window) {
+    function Controller($rootScope, $scope, $http, $window) {
         $scope.timeoutId = null;
         $scope.binSize = '5m';
         $scope.startTime = '';
