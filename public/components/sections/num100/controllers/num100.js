@@ -3,7 +3,7 @@
 
     angular
         .module('BlockReducerApp')
-        .controller('Num100ChartController', Controller);
+        .controller('Num100ChartController', ['$rootScope', '$scope', '$http', '$window', Controller]);
 
     function Controller($scope, $http, $window) {
         $scope.timeoutId = null;
@@ -218,10 +218,10 @@
                     } else if ($scope.binSize == '1h') {
                         timeout = 1800000;
                     }
-                    if ($scope.timeoutId != null) {
+                    if ($rootScope.timeoutId != null) {
                         clearTimeout($scope.timeoutId);
                     }
-                    $scope.timeoutId = setTimeout($scope.CustomizeChart, timeout);
+                    $rootScope.timeoutId = setTimeout($scope.CustomizeChart, timeout);
                 });
             }
         };
