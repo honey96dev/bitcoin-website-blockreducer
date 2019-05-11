@@ -406,7 +406,7 @@ function StoreEstimateRows(data, tmp, callback) {
 
 function Store3HourCandle(startTime, endTime, callback) {
     var deleteSql = 'TRUNCATE TABLE estimate_tmp';
-    var selectSql = 'SELECT MAX(id) as id, MAX(isoDate) AS isoDate ,symbol, MAX(`open`) as open , MAX(high) as high ,MIN(low) as low, MIN(`close`) as close FROM `bitmex_data_5m_view` WHERE isoDate BETWEEN ? AND ?  GROUP BY LEFT(isoDate,13)  order by id ';
+    var selectSql = 'SELECT MAX(isoDate) AS isoDate ,symbol, MAX(`open`) as open , MAX(high) as high ,MIN(low) as low, MIN(`close`) as close FROM `bitmex_data_5m_view` WHERE isoDate BETWEEN ? AND ?  GROUP BY LEFT(isoDate,13)  order by isoDate; ';
     var insertSql = 'INSERT INTO estimate_tmp SET ?';
 
     dbConn.query(deleteSql, function(error, results, fields) {
