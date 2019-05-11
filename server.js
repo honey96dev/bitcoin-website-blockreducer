@@ -10,58 +10,69 @@ var bodyParser = require('body-parser');
 var config = require('./_core/config');
 
 var httpPort = process.env.PORT || config.server.httpPort;
+var cluster = require('cluster');
+if (cluster.isMaster) {
+    cluster.fork();
 
-var app = express();
+    cluster.on('exit', function(worker, code, signal) {
+        cluster.fork();
+    });
+}
 
-app.set('view engine', 'ejs');
-app.set('views', __dirname + '/_auth');
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+if (cluster.isWorker) {
+    // put your code here
+    var app = express();
 
-app.use(session({
-    secret: config.session.secret,
-    resave: false,
-    saveUninitialized: true,
-    store: new MySQLStore( config.mysql )
-}));
+    app.set('view engine', 'ejs');
+    app.set('views', __dirname + '/_auth');
+    app.use(cors());
+    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.json());
 
-// use JWT auth to secure the api
-app.use('/api', expressJwt({ secret: config.session.secret })
-    .unless({
-        path: [
-            '/api/users/authenticate',
-            '/api/users/register',
-            /\/api\/fft\/calculated\/*/,
-            /\/api\/fft\/id0\/*/,
-            /\/api\/fft\/id0_collection\/*/,
-        ]
+    app.use(session({
+        secret: config.session.secret,
+        resave: false,
+        saveUninitialized: true,
+        store: new MySQLStore( config.mysql )
     }));
 
-const apis = require('./app/controllers/api.controller');
+// use JWT auth to secure the api
+    app.use('/api', expressJwt({ secret: config.session.secret })
+        .unless({
+            path: [
+                '/api/users/authenticate',
+                '/api/users/register',
+                /\/api\/fft\/calculated\/*/,
+                /\/api\/fft\/id0\/*/,
+                /\/api\/fft\/id0_collection\/*/,
+            ]
+        }));
 
-app.use('/register', require('./app/controllers/authentication/register.controller'));
-app.use('/login', require('./app/controllers/authentication/login.controller'));
-app.use('/chart', require('./app/controllers/chart.controller'));
-app.use('/api/users', require('./app/controllers/authentication/user.controller'));
-app.use('/api/fft', apis);
-app.use('/app', require('./app/controllers/app.controller'));
-app.use('/exchange', require('./exchange/app'));
+    const apis = require('./app/controllers/api.controller');
 
-app.use('/', function(req, res) {
-    return res.redirect('/app');
-});
+    app.use('/register', require('./app/controllers/authentication/register.controller'));
+    app.use('/login', require('./app/controllers/authentication/login.controller'));
+    app.use('/chart', require('./app/controllers/chart.controller'));
+    app.use('/api/users', require('./app/controllers/authentication/user.controller'));
+    app.use('/api/fft', apis);
+    app.use('/app', require('./app/controllers/app.controller'));
+    app.use('/exchange', require('./exchange/app'));
 
-var httpServer = http.createServer(app);
-var io = require('socket.io')(httpServer);
-var cryptoMarkets = require('./exchange/routes/cryptoMarkets');
-cryptoMarkets.setSocketIO(io);
+    app.use('/', function(req, res) {
+        return res.redirect('/app');
+    });
 
-httpServer.listen(httpPort, function() {
-    console.log((new Date()) + '=> Http Sever running on http://' + httpServer.address().address + ':' + httpPort);
-});
+    var httpServer = http.createServer(app);
+    var io = require('socket.io')(httpServer);
+    var cryptoMarkets = require('./exchange/routes/cryptoMarkets');
+    cryptoMarkets.setSocketIO(io);
+
+    httpServer.listen(httpPort, function() {
+        console.log((new Date()) + '=> Http Sever running on http://' + httpServer.address().address + ':' + httpPort);
+    });
 
 
-setTimeout(apis.saveId0Service, 0, '1m');
-setTimeout(apis.saveId0Service, 15000, '5m');
-setTimeout(apis.saveId0Service, 30000, '1h');
+    setTimeout(apis.saveId0Service, 0, '1m');
+    setTimeout(apis.saveId0Service, 15000, '5m');
+    setTimeout(apis.saveId0Service, 30000, '1h');
+}
