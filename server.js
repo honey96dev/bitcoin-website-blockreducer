@@ -70,9 +70,4 @@ if (cluster.isWorker) {
     httpServer.listen(httpPort, function() {
         console.log((new Date()) + '=> Http Sever running on http://' + httpServer.address().address + ':' + httpPort);
     });
-
-
-    setTimeout(apis.saveId0Service, 0, '1m');
-    setTimeout(apis.saveId0Service, 15000, '5m');
-    setTimeout(apis.saveId0Service, 30000, '1h');
 }
