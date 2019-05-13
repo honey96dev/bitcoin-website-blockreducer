@@ -42,6 +42,7 @@ if (cluster.isWorker) {
             path: [
                 '/api/users/authenticate',
                 '/api/users/register',
+                '/chart/volume/init',
                 /\/api\/fft\/calculated\/*/,
                 /\/api\/fft\/id0\/*/,
                 /\/api\/fft\/id0_collection\/*/,

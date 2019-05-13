@@ -130,7 +130,7 @@
                     //     b: 40,
                     //     l: 60
                     // },
-                    showlegend: false,
+                    showlegend: true,
                     xaxis: {
                         autorange: true,
                         rangeslider: {},

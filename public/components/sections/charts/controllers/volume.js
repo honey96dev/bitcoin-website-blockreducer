@@ -6,141 +6,248 @@
         .controller('VolumeChartController', Controller);
 
     function Controller($scope, $http, $window) {
-        $scope.trace1 = {
-            x: [], 
-            close: [], 
-            decreasing: {line: {color: '#7F7F7F'}}, 
-            high: [], 
-            increasing: {line: {color: '#17BECF'}},
-            line: {color: 'rgba(31,119,180,1)'},
-            low: [],
-            open: [],
-            type: 'ohlc',
-            xaxis: 'x',
-            yaxis: 'y'
-        };
-        
-        $scope.trace2 = {
+        $scope.arrayCandles = [
+            {id: '1m', value: "1 Minute"},
+            {id: '5m', value: "5 Minute"},
+            // {id: 2, value: "10 Minute"},
+            // {id: 3, value: "30 Minute"},
+            {id: '1h', value: "1 Hour"},
+            // {id: 5, value: "3 Hour"},
+            // {id: 6, value: "1 Day"}
+        ];
+
+        $scope.binSize = '5m';
+        $scope.startTime = '';
+        $scope.endTime = '';
+
+        $scope.open = {
             x: [],
             y: [],
-            name: 'yaxis2 data',
-            yaxis: 'y2',
-            type: 'scatter'
+            name: 'Open',
+            yaxis: 'y1',
+            type: 'scatter',
         };
-    
+        $scope.volume = {
+            x: [],
+            y: [],
+            name: 'Volume',
+            yaxis: 'y2',
+            type: 'scatter',
+            // line: {
+            //     dash: 'dash',
+            // },
+        };
+        $scope.num_3 = {
+            x: [],
+            y: [],
+            name: 'Num3*VWAP',
+            yaxis: 'y1',
+            type: 'scatter',
+            line: {
+                dash: 'dash',
+            },
+        };
+        $scope.num_6 = {
+            x: [],
+            y: [],
+            name: 'Num6*VWAP',
+            yaxis: 'y1',
+            type: 'scatter',
+            line: {
+                dash: 'dash',
+            },
+        };
+        $scope.num_9 = {
+            x: [],
+            y: [],
+            name: 'Num9*VWAP',
+            yaxis: 'y1',
+            type: 'scatter',
+            line: {
+                dash: 'dash',
+            },
+        };
+        $scope.num_100 = {
+            x: [],
+            y: [],
+            name: 'Num100*VWAP',
+            yaxis: 'y1',
+            type: 'scatter',
+            line: {
+                dash: 'dash',
+            },
+        };
+
+        $scope.open2 = {
+            x: [],
+            y: [],
+            name: 'Open',
+            yaxis: 'y1',
+            type: 'scatter',
+        };
+
+        $scope.openInterest = {
+            x: [],
+            y: [],
+            name: 'OpenInterest',
+            yaxis: 'y2',
+            type: 'scatter',
+        };
+
+        $scope.openValue = {
+            x: [],
+            y: [],
+            name: 'OpenValue',
+            yaxis: 'y2',
+            type: 'scatter',
+        };
+
+        $scope.CustomizeChart = function() {
+            if ($scope.startTime > $scope.endTime) {
+                $window.alert('Please Check your "Start Time"!');
+            } else {
+                $http({
+                    method: "POST",
+                    url: "/chart/volume/init",
+                    params: {
+                        interval: $scope.binSize,
+                        startTime: $scope.startTime,
+                        endTime: $scope.endTime,
+                    }
+                }).then(function (res) {
+                    $scope.open.x = [];
+                    $scope.open.y = [];
+                    $scope.volume.x = [];
+                    $scope.volume.y = [];
+                    $scope.num_3.x = [];
+                    $scope.num_3.y = [];
+                    $scope.num_6.x = [];
+                    $scope.num_6.y = [];
+                    $scope.num_9.x = [];
+                    $scope.num_9.y = [];
+                    $scope.num_100.x = [];
+                    $scope.num_100.y = [];
+
+                    var tmpData = res.data;
+
+                    for (var obj of tmpData) {
+                        $scope.open.x.push(obj.timestamp);
+                        $scope.open.y.push(obj.open);
+                        $scope.volume.x.push(obj.timestamp);
+                        $scope.volume.y.push(obj.volume);
+                        $scope.num_3.x.push(obj.timestamp);
+                        $scope.num_3.y.push(obj.num_3);
+                        $scope.num_6.x.push(obj.timestamp);
+                        $scope.num_6.y.push(obj.num_6);
+                        $scope.num_9.x.push(obj.timestamp);
+                        $scope.num_9.y.push(obj.num_9);
+                        $scope.num_100.x.push(obj.timestamp);
+                        $scope.num_100.y.push(obj.num_100);
+                    }
+
+                    var data = [$scope.open, $scope.volume, $scope.num_3, $scope.num_6, $scope.num_9, $scope.num_100];
+
+                    var layout = {
+                        dragmode: 'zoom',
+                        showlegend: true,
+                        xaxis: {
+                            autorange: true,
+                            rangeslider: {},
+                            title: 'Date',
+                            type: 'date'
+                        },
+                        yaxis: {
+                            title: 'Open/Real',
+                            autorange: true,
+                            type: 'linear'
+                        },
+                        yaxis2: {
+                            title: 'Volume',
+                            titlefont: {color: 'rgb(148, 103, 189)'},
+                            tickfont: {color: 'rgb(148, 103, 189)'},
+                            overlaying: 'y',
+                            side: 'right'
+                        }
+                    };
+
+                    Plotly.newPlot('plotly-volume-open', data, layout);
+
+                    // var data2 = [$scope.trace2];
+                    //
+                    // var layout2 = {
+                    //     yaxis: {
+                    //         title: 'Volume',
+                    //         titlefont: {color: 'rgb(148, 103, 189)'},
+                    //         tickfont: {color: 'rgb(148, 103, 189)'},
+                    //         overlaying: 'y',
+                    //         side: 'right'
+                    //     }
+                    // };
+                    //
+                    // Plotly.newPlot('plotly-volume', data2, layout2);
+                    $http({
+                        method: "POST",
+                        url: "/chart/volume/custom",
+                        params: {
+                            interval: $scope.binSize,
+                            startTime: $scope.startTime,
+                            endTime: $scope.endTime,
+                        }
+                    }).then(function (res) {
+                        $scope.open2.x = [];
+                        $scope.open2.y = [];
+                        $scope.openInterest.x = [];
+                        $scope.openInterest.y = [];
+                        $scope.openValue.x = [];
+                        $scope.openValue.y = [];
+
+                        var tmpData = res.data;
+
+                        for (var obj of tmpData) {
+                            $scope.open2.x.push(obj.timestamp);
+                            $scope.open2.y.push(obj.open);
+                            $scope.openInterest.x.push(obj.timestamp);
+                            $scope.openInterest.y.push(obj.openInterest);
+                            $scope.openValue.x.push(obj.timestamp);
+                            $scope.openValue.y.push(obj.openValue);
+                        }
+
+                        var data = [$scope.open, $scope.openInterest, $scope.openValue];
+
+                        var layout = {
+                            dragmode: 'zoom',
+                            showlegend: true,
+                            xaxis: {
+                                autorange: true,
+                                rangeslider: {},
+                                title: 'Date',
+                                type: 'date'
+                            },
+                            yaxis: {
+                                title: 'Open',
+                                autorange: true,
+                                type: 'linear'
+                            },
+                            yaxis2: {
+                                title: 'OpenInterest/OpenValue',
+                                titlefont: {color: 'rgb(148, 103, 189)'},
+                                tickfont: {color: 'rgb(148, 103, 189)'},
+                                overlaying: 'y',
+                                side: 'right'
+                            }
+                        };
+
+                        Plotly.newPlot('plotly-volume-interest', data, layout);
+                    });
+                });
+            }
+        }
+
         initController();
 
         function initController() {
-            $http({
-                method: "POST",
-                url: "/chart/volume/init",
-                data: {
-                    str: "init"
-                }
-            }).then(function(res) {
-                $scope.trace1.x = [];
-                $scope.trace1.close = [];
-                $scope.trace1.high = [];
-                $scope.trace1.low = [];
-                $scope.trace1.open = [];
-                $scope.trace2.x = [];
-                $scope.trace2.y = [];
-
-                var tmpData = res.data;
-                for (var obj of tmpData[0]) {
-                    var volume = obj.BuySize - obj.SellSize
-                    $scope.trace2.x.push(obj.isoDate);
-                    $scope.trace2.y.push(volume);                
-                }
-
-                for (var obj of tmpData[1]) {
-                    $scope.trace1.x.push(obj.isoDate);
-                    $scope.trace1.open.push(obj.open);
-                    $scope.trace1.high.push(obj.high);
-                    $scope.trace1.low.push(obj.low);
-                    $scope.trace1.close.push(obj.close);
-                }
-    
-                var data = [$scope.trace1, $scope.trace2];
-
-                var layout = {
-                    dragmode: 'zoom',
-                    margin: {
-                        r: 10,
-                        t: 25,
-                        b: 40,
-                        l: 60
-                    },
-                    showlegend: false,
-                    xaxis: {
-                        autorange: true,
-                        rangeslider: {},
-                        title: 'Date',
-                        type: 'date'
-                    },
-                    yaxis: {
-                        title: 'Price',
-                        autorange: true,
-                        type: 'linear'
-                    },
-                    yaxis2: {
-                        title: 'Volume',
-                        titlefont: {color: 'rgb(148, 103, 189)'},
-                        tickfont: {color: 'rgb(148, 103, 189)'},
-                        overlaying: 'y',
-                        side: 'right'
-                    }
-                };
-
-                Plotly.newPlot('plotly-div', data, layout);
-
-                var data2 = [$scope.trace2];
-
-                var layout2 = {
-                    yaxis: {
-                      title: 'Volume',
-                      titlefont: {color: 'rgb(148, 103, 189)'},
-                      tickfont: {color: 'rgb(148, 103, 189)'},
-                      overlaying: 'y',
-                      side: 'right'
-                    }
-                };
-
-                Plotly.newPlot('plotly-volume', data2, layout2);
-            });
+            $scope.CustomizeChart();
         }
-
-        // $scope.CustomizeChart = function() {
-        //     var startTime = new Date($scope.startTime).toISOString();
-        //     var endTime = new Date($scope.endTime).toISOString();
-    
-        //     if ($scope.startTime > $scope.endTime) {
-        //         $window.alert('Please Check your "Start Time"!')
-        //     } else {
-        //         $http({
-        //             method: "POST",
-        //             url: "/chart/volume/custom",
-        //             data: {
-        //                 startTime: startTime,
-        //                 endTime: endTime
-        //             }
-        //         }).then((res) => {
-        //             var tmpData = res.data;
-        //             console.log(tmpData);
-        //             for (var obj of tmpData) {
-        //                 var volume = obj.BuySize - obj.SellSize
-        //                 $scope.graphData.x.push(obj.isoDate);
-        //                 $scope.graphData.y.push(volume);                
-        //             }
-    
-        //             $scope.graphPlots = [$scope.graphData];
-    
-        //             $scope.graphData = {
-        //                 x: [], y:[], type: 'scatter'
-        //             }
-        //         });
-        //     }
-        // }
     }
 
 })();
