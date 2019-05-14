@@ -27,7 +27,7 @@
         $scope.trace2 = {
             x: [],
             y: [],
-            name: 'Low Pass',
+            name: 'Volatility Index',
             yaxis: 'y2',
             type: 'scatter'
         };
@@ -35,7 +35,7 @@
         $scope.trace3 = {
             x: [],
             y: [],
-            name: 'High Pass',
+            name: 'Residual Index',
             yaxis: 'y2',
             type: 'scatter'
         };
@@ -110,7 +110,7 @@
                         type: 'linear'
                     },
                     yaxis2: {
-                        title: 'Low Pass',
+                        title: 'Volatility Index',
                         titlefont: {color: 'rgb(148, 103, 189)'},
                         tickfont: {color: 'rgb(148, 103, 189)'},
                         overlaying: 'y',
@@ -143,7 +143,7 @@
                         type: 'linear'
                     },
                     yaxis2: {
-                        title: 'High Pass',
+                        title: 'Residual Index',
                         // titlefont: {color: 'rgb(148, 103, 189)'},
                         // tickfont: {color: 'rgb(148, 103, 189)'},
                         overlaying: 'y',
@@ -328,7 +328,7 @@
                         type: 'linear'
                     },
                     yaxis2: {
-                        title: 'Low Pass',
+                        title: 'Volatility Index',
                         titlefont: {color: 'rgb(148, 103, 189)'},
                         tickfont: {color: 'rgb(148, 103, 189)'},
                         overlaying: 'y',
@@ -362,7 +362,7 @@
                         type: 'linear'
                     },
                     yaxis2: {
-                        title: 'High Pass',
+                        title: 'Residual Index',
                         // titlefont: {color: 'rgb(148, 103, 189)'},
                         // tickfont: {color: 'rgb(148, 103, 189)'},
                         overlaying: 'y',
