@@ -191,7 +191,7 @@ function GetVolumeChart2(req, res) {
                 timestamp: item.timestamp,
                 open: lastOpen,
                 openInterest: item.openInterest,
-                openValue: item.openValue,// / 500000,
+                openValue: item.openValue / 10000,
             });
         }
         final.pop();
