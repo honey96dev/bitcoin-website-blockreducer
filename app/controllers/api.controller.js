@@ -254,6 +254,8 @@ router.get('/id0_collection/:interval', (req, res) => {
                 })
             }
             res.send(finalResult);
+        } else {
+            res.send([]);
         }
     });
 });
@@ -359,4 +361,4 @@ function power_of_2(n) {
 
     return n && (n & (n - 1)) === 0;
 }
-module.exports = router; 
+module.exports = router;
