@@ -44,14 +44,15 @@
             }
         };
 
-        initController();
-
-        function initController() {
+        $scope.CustomizeChart = function() {
             $http({
                 method: "POST",
                 url: "/chart/hidden/day",
                 data: {
-                    str: "init"
+                    params: {
+                        startTime: $scope.startTime,
+                        endTime: $scope.endTime,
+                    }
                 }
             }).then((res) => {
                 $scope.trace1.x = [];
@@ -79,11 +80,11 @@
                 // console.log(data1);
                 var layout1 = {
                     yaxis: {
-                      title: 'Price',
-                      titlefont: {color: 'rgb(148, 103, 189)'},
-                      tickfont: {color: 'rgb(148, 103, 189)'},
-                      overlaying: 'y1',
-                      side: 'right'
+                        title: 'Price',
+                        titlefont: {color: 'rgb(148, 103, 189)'},
+                        tickfont: {color: 'rgb(148, 103, 189)'},
+                        overlaying: 'y1',
+                        side: 'right'
                     }
                 };
                 // console.log('Plotly.newPlot-day', data1);
@@ -130,6 +131,14 @@
                 // console.log(data2);
             });
         }
+
+        initController();
+
+        function initController() {
+            $scope.CustomizeChart();
+        }
+
+
     }
 
 })();
