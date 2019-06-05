@@ -13,16 +13,15 @@ service.GetLast1YearHidden = GetLast1YearHidden;
 
 module.exports = service;
 
-function GetLast1DayHidden() {
-    var deferred = Q.defer();
-    var tmpDataArray = [];
+function GetLast1DayHidden(startTime, endTime) {
+    let deferred = Q.defer();
+    let tmpDataArray = [];
     GetMaxIsoDate('1m', function(callback) {
-        var endTime = callback.max;
-        let startTime;
-        if (endTime != null) {
+        if (typeof endTime === 'undefined') {
+            endTime = callback.max;
+        }
+        if (typeof startTime === 'undefined') {
             startTime = new Date(new Date(endTime).getTime() - 86400000).toISOString();
-        } else {
-            startTime = new Date(new Date().getTime() - 86400000).toISOString();
         }
         GetCutomizePrice (startTime, endTime, '1m', function(callback) {
             // callback.splice(0, 0, {timestamp: startTime, open: null});
@@ -94,7 +93,7 @@ function GetMaxIsoDate(binSize, callback) {
     var selectSql = sprintf('SELECT `timestamp` AS max FROM bitmex_data_%s_view ORDER BY `timestamp` DESC LIMIT 0, 1;', binSize);
 
     dbConn.query(selectSql, function(error, results, fields) {
-        if (error) {            
+        if (error) {
             deferred.reject("Error!");
         }
         let timestamp = '';
