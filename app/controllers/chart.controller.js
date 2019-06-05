@@ -22,7 +22,7 @@ router.post('/hidden/day', GetLast1DayHidden);
 router.post('/hidden/year', GetLast1YearHidden);
 router.post('/trade/init', GetLast7dayTrade);
 
-module.exports = router; 
+module.exports = router;
 
 function GetLast1MonthPrice(req, res) {
     // res.json({});
@@ -286,7 +286,17 @@ function GetEstimateFFT(req, res) {
 function GetLast1DayHidden(req, res) {
     // res.json({});
     // return;
-    hiddenService.GetLast1DayHidden()
+    console.log(req.body);
+    let startTime = req.body.params.startTime;
+    let endTime = req.body.params.endTime;
+    if (startTime && startTime.length > 0) {
+        startTime = (new Date(startTime)).toISOString();
+    }
+    if (endTime && endTime.length > 0) {
+        endTime = (new Date(endTime)).toISOString();
+    }
+    console.log(startTime, endTime);
+    hiddenService.GetLast1DayHidden(startTime, endTime)
         .then(function(data) {
             if(data) {
                 res.json(data);
