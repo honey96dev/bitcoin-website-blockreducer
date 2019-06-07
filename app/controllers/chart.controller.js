@@ -239,7 +239,6 @@ function GetDataByCandle(req, res) {
     var startTime = (new Date( req.body.inputData.startTime)).toISOString();
     var endTime = (new Date(req.body.inputData.endTime)).toISOString();
     var candle = req.body.inputData.candle;
-    console.log(candle);
     // fftService.GetDataByCandle(candle, startTime, endTime)
     //     .then(function(data) {
     //         if(data) {
@@ -268,8 +267,24 @@ function GetDataByCandle(req, res) {
 function GetEstimateFFT(req, res) {
     // res.json({});
     // return;
-    var estiamtes = req.body;
-    fftService.GetEstimateFFT(estiamtes)
+    let candle = null;
+    if (req.body.data && req.body.data.candle) {
+        candle = req.body.data.candle;
+    }
+
+    let endTime = new Date().toISOString();
+    if (req.body.data && req.body.data.endTime) {
+        endTime = (new Date(req.body.data.endTime)).toISOString();
+    }
+    let startTime = new Date();
+    startTime.setFullYear(startTime.getFullYear() - 4);
+    startTime = startTime.toISOString();
+    if (req.body.data && req.body.data.startTime) {
+        startTime = (new Date(req.body.data.startTime)).toISOString();
+    }
+    var estimates = req.body.estimates;
+    // console.log('GetEstimateFFT', req.body, startTime, endTime, estimates);
+    fftService.GetEstimateFFT(candle, startTime, endTime, estimates)
         .then(function(data) {
             if(data) {
                 res.json(data);

@@ -56,10 +56,10 @@
                 <div class="card-body text-center" style="padding: 0 !important;">
                     <div class="row" align="center">
                         <div class="col-md-12">
-                                <div id="plotly-div" style="width:100%; height: 700px;"></div>
+                                <div id="plotly-div" style="width:1050px; height: 700px;"></div>
                         </div>
                         <div class="col-md-12">
-                                <div id="myFFTDiv" style="width:100%; height: 700px;"> </div>
+                                <div id="myFFTDiv" style="width:1050px; height: 700px;"> </div>
                         </div>
                     </div>
                 </div>
@@ -79,7 +79,7 @@
 
                     <div class="col-md-12">
                         <div class="table-responsive">
-                            <form ng-submit="GenerateChart()">
+                            <form ng-submit="GenerateChart(data)">
                                 <table id="mytable" class="table table-bordered">
                                     <thead>
                                         <th style="width:10%; text-align:center;">No</th>
@@ -139,12 +139,12 @@
             <div class="modal-body">
                 <div class="col-md-12" align="center">
                     <!-- <line-plot graph-plots=graphPlots style="width:1000px; height: 700px;"></line-plot> -->
-                    <div id="plotly-combined-modal" style="width:1300px; height: 350px;"></div>
+                    <div id="ploty-fft-modal1" style="width:1050px; height: 700px;"></div>
                 </div>
 
                 <div class="col-md-12" align="center">
                     <!-- <line-plot graph-plots=graphPlots style="width:1000px; height: 700px;"></line-plot> -->
-                    <div id="ploty-fft-modal" style="width:1300px; height: 450px;"></div>
+                    <div id="ploty-fft-modal2" style="width:1050px; height: 700px;"></div>
                 </div>
             </div>
         </div>
