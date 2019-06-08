@@ -7,6 +7,7 @@ var router = require('express').Router();
  * else go to client main application
  */
 router.use('/', function(req, res, next) {
+    // console.log(req.session);
     if (req.path !== '/login' && !req.session.token) {
         return res.redirect('/login?returnUrl=' + encodeURIComponent('/app' + req.path));
     }

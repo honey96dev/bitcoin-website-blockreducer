@@ -284,7 +284,7 @@ function GetEstimateFFT(req, res) {
     }
     var estimates = req.body.estimates;
     // console.log('GetEstimateFFT', req.body, startTime, endTime, estimates);
-    fftService.GetEstimateFFT(candle, startTime, endTime, estimates)
+    fftService.GetEstimateFFT(candle, startTime, endTime, estimates, req.session.userId)
         .then(function(data) {
             if(data) {
                 res.json(data);

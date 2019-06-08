@@ -28,9 +28,9 @@ function RegisterUser(req, res) {
 
 function AuthenticateUser(req, res) {
     userService.Authenticate(req.body.email, req.body.password)
-        .then(function(token) {
-            if (token) {
-                res.send({ token: token });
+        .then(function(data) {
+            if (data) {
+                res.send(data);
             } else {
                 res.status(401).send('User Emaiil or password is incorrect');
             }

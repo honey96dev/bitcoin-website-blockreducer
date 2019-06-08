@@ -67,9 +67,12 @@ function Authenticate (email, password) {
     FindUser(userParam, function(callback) {
         if (callback.length > 0) {
             if (bcrypt.compareSync(password, callback[0].hash)) {
-                deferred.resolve(jwt.sign({ 
-                    sub: callback[0].id
-                }, config.session.secret));
+                deferred.resolve({
+                    userId: callback[0].id,
+                    token: jwt.sign({
+                        sub: callback[0].id
+                    }, config.session.secret)
+                });
             } else {
                 // authentication failed
                 deferred.resolve();

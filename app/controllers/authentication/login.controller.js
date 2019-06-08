@@ -40,8 +40,8 @@ router.post('/', function(req, res, next) {
         }
 
         // save JWT token in the session to make it available to the angular app
+        req.session.userId = body.userId;
         req.session.token = body.token;
-
         // redirect to returnUrl
         var returnUrl = req.query.returnUrl && decodeURIComponent(req.query.returnUrl) || '/';
         res.redirect(returnUrl);
