@@ -486,9 +486,9 @@ service.GetEstimateFFT = function (candle, startTime, endTime, estimates, userId
                         dbConn.query(sql, null, function(error, results, fields) {
                             if (error) { console.log(error); }
 
-                            if (results != null && results.length > 0){
-                                results.pop();
-                            }
+                            // if (results != null && results.length > 0){
+                            //     results.pop();
+                            // }
                             deferred.resolve(_.add(results));
                         });
                     });
