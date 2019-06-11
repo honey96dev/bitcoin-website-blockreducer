@@ -126,7 +126,7 @@
                     }
                 }
 
-                Plotly.plot('hidden-timestamp-chart', data3, layout3);
+                Plotly.plot('hidden-timestamp-chart', data3, layout3, {responsive: true});
                 // console.log(data2);
             });
         }

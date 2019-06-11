@@ -58,6 +58,7 @@ if (cluster.isWorker) {
     app.use('/api/fft', apis);
     app.use('/app', require('./app/controllers/app.controller'));
     app.use('/exchange', require('./exchange/app'));
+    app.use('/deribit', require('./app/controllers/deribit.controller'));
 
     app.use('/', function(req, res) {
         return res.redirect('/app');

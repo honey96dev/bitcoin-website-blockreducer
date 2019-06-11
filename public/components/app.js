@@ -110,6 +110,15 @@
                 // data: { activeTab: 'fftChart' }
             })
 
+            .state('deribit', {
+                url: '/deribit',
+                templateUrl: './components/sections/deribit/views/deribit.html',
+                // templateUrl: './components/sections/admin/estimate-chart/views/estimate-chart.html',
+                controller: 'DeribitController',
+                controllerAs: 'vm',
+                // data: { activeTab: 'fftChart' }
+            })
+
             .state('admin', {
                 url: '/admin',
                 templateUrl: './components/sections/admin/main/views/main.html',

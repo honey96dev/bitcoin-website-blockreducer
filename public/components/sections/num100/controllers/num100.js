@@ -208,7 +208,7 @@
                     };
 
                     try {
-                        Plotly.newPlot('plotly-div-num100', data, layout);
+                        Plotly.newPlot('plotly-div-num100', data, layout, {responsive: true});
                     } catch (e) {
 
                     }

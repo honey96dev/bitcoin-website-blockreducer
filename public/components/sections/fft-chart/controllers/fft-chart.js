@@ -264,7 +264,7 @@
                         }
                     };
 
-                    Plotly.newPlot('ploty-fft-modal1', data1, layout1);
+                    Plotly.newPlot('ploty-fft-modal1', data1, layout1, {responsive: true});
 
 
                     var data2 = [$scope.trace1, $scope.trace3];
@@ -298,7 +298,7 @@
                         }
                     };
 
-                    Plotly.newPlot('ploty-fft-modal2', data2, layout2);
+                    Plotly.newPlot('ploty-fft-modal2', data2, layout2, {responsive: true});
 
                     // var data2 = [$scope.trace2];
 
@@ -382,7 +382,7 @@
                     }
                 };
 
-                Plotly.newPlot('plotly-div', data1, layout1);
+                Plotly.newPlot('plotly-div', data1, layout1, {responsive: true});
 
 
                 var data2 = [$scope.trace1, $scope.trace3];
@@ -416,7 +416,7 @@
                     }
                 };
 
-                Plotly.newPlot('myFFTDiv', data2, layout2);
+                Plotly.newPlot('myFFTDiv', data2, layout2, {responsive: true});
 
                 // var data2 = [$scope.trace2];
 

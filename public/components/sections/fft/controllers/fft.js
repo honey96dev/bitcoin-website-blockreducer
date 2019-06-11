@@ -62,7 +62,7 @@
                     }
                 };
     
-                Plotly.plot('plotly-div', data, layout);
+                Plotly.plot('plotly-div', data, layout, {responsive: true});
 
                 
             });
@@ -113,7 +113,7 @@
                         }
                     };
         
-                    Plotly.plot('plotly-div', data, layout);
+                    Plotly.plot('plotly-div', data, layout, {responsive: true});
                 });
 
                
