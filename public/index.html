@@ -150,11 +150,39 @@
                                     <span>Exchange Information</span>
                                 </a>
                             </li>
-                            <li>
-                                <a ui-sref="deribit" onmouseover="" >
+                            <!--<li>-->
+                                <!--<a ui-sref="deribit" onmouseover="" >-->
+                                    <!--<i class="fa fa-area-chart"></i>-->
+                                    <!--<span>Deribit Infor</span>-->
+                                <!--</a>-->
+                            <!--</li>-->
+                            <li class="sidebar-dropdown active" id="deribit_chart">
+
+                                <a href="#" >
                                     <i class="fa fa-area-chart"></i>
-                                    <span>Deribit Infor</span>
+                                    <span>Deribit Information</span>
+                                    <!--<span class="badge badge-pill badge-warning">New</span>-->
                                 </a>
+                                <div class="sidebar-submenu" style="display:block;">
+                                    <ul>
+                                        <li>
+                                            <a ui-sref="deribit-options" onmouseover="" />
+                                            Options
+                                            <!--<span class="badge badge-pill badge-success">Pro</span>-->
+                                            </a>
+                                        </li>
+                                        <!--<li>-->
+                                            <!--<a ui-sref="volume-chart" onmouseover="" />-->
+                                            <!--Volume Chart-->
+                                            <!--</a>-->
+                                        <!--</li>-->
+                                        <!--<li>-->
+                                            <!--<a ui-sref="current-trade-chart" onmouseover=""/>-->
+                                            <!--Current Trade Chart-->
+                                            <!--</a>-->
+                                        <!--</li>-->
+                                    </ul>
+                                </div>
                             </li>
                             <li>
                                 <a ui-sref="account" onmouseover="" >
@@ -231,7 +259,8 @@
         <script src='./components/sections/hidden-order/controllers/hidden-year.js'></script>
         <script src='./components/sections/fft-chart/controllers/fft-chart.js'></script>
         <script src='./components/sections/num100/controllers/num100.js'></script>
-        <script src='./components/sections/deribit/controllers/deribit.js'></script>
+        <script src='./components/sections/deribit/controllers/options.js'></script>
+        <!--<script src='./components/sections/deribit/controllers/result.js'></script>-->
         <script src='./components/sections/exchange/controllers/exchange.js'></script>
         <script src='./components/sections/admin/main/controllers/main.js'></script>
         <script src='./components/sections/admin/users/controllers/users.js'></script>

@@ -110,11 +110,20 @@
                 // data: { activeTab: 'fftChart' }
             })
 
-            .state('deribit', {
-                url: '/deribit',
-                templateUrl: './components/sections/deribit/views/deribit.html',
+            .state('deribit-options', {
+                url: '/deribit-options',
+                templateUrl: './components/sections/deribit/views/options.html',
                 // templateUrl: './components/sections/admin/estimate-chart/views/estimate-chart.html',
-                controller: 'DeribitController',
+                controller: 'DeribitOptionsController',
+                controllerAs: 'vm',
+                // data: { activeTab: 'fftChart' }
+            })
+
+            .state('deribit-result', {
+                url: '/deribit-result',
+                templateUrl: './components/sections/deribit/views/result.html',
+                // templateUrl: './components/sections/admin/estimate-chart/views/estimate-chart.html',
+                controller: 'DeribitResultController',
                 controllerAs: 'vm',
                 // data: { activeTab: 'fftChart' }
             })
