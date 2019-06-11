@@ -13,10 +13,9 @@ var config = {
     //     }
     // },
     mysql: {
-        connectionLimit : 10,
-        host: '108.61.186.24',
-        user: 'bitmex3536',
-        password: 'BitMex*95645636',
+        host: '127.0.0.1',
+        user: 'root',
+        password: '',
         database: 'blockreducerdb',
         port: 3306
     },
@@ -33,7 +32,10 @@ var config = {
     client: {
     url: 'http://localhost:8080/api'
         //url: 'https://blockreducerwebapp.azurewebsites.net/api'
-    }
+    },
+    hiddenChartEntryNum: 750,
+    volumeChartEntryNum: 1500,
+    fftChartEntryNum: 1024,
 };
 
 module.exports = config;
