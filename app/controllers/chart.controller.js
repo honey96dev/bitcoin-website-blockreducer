@@ -276,13 +276,17 @@ function GetEstimateFFT(req, res) {
     if (req.body.data && req.body.data.endTime) {
         endTime = (new Date(req.body.data.endTime)).toISOString();
     }
+    endTime = new Date(endTime);
+    endTime.setMinutes(Math.floor(endTime.getMinutes() / 5) * 5);
+    endTime = endTime.toISOString();
+
     let startTime = new Date();
     startTime.setFullYear(startTime.getFullYear() - 4);
     startTime = startTime.toISOString();
     if (req.body.data && req.body.data.startTime) {
         startTime = (new Date(req.body.data.startTime)).toISOString();
     }
-    var estimates = req.body.estimates;
+    let estimates = req.body.estimates;
     // console.log('GetEstimateFFT', req.body, startTime, endTime, estimates);
     fftService.GetEstimateFFT(candle, startTime, endTime, estimates, req.session.userId)
         .then(function(data) {

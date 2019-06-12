@@ -346,8 +346,10 @@ service.GetEstimateFFT = function (candle, startTime, endTime, estimates, userId
             let lowPass = [];
             let highPass = [];
             let maxChange1;
-            const realResultLen = results.length;
-            if (results != null && realResultLen > 0) {
+            let realResultLen = results.length;
+            if (results != null && realResultLen > 1) {
+                // results.pop();
+                // realResultLen = results.length;
                 for (let item of results) {
                     timestamps.push(item.timestamp);
                     open.push(item.open);
@@ -379,6 +381,7 @@ service.GetEstimateFFT = function (candle, startTime, endTime, estimates, userId
                 let lastOpen = lastItem.open;
                 let offset;
                 let calcedOpen;
+                console.log(lastItem, results);
                 for (let estimate of estimates) {
                     offset = (estimate.price - lastOpen) / estimate.time;
                     for (let i = 1; i <= estimate.time; i++) {
@@ -482,7 +485,8 @@ service.GetEstimateFFT = function (candle, startTime, endTime, estimates, userId
                         }
                         const dataCount = results[0].count;
                         const step = dataCount / config.hiddenChartEntryNum;
-                        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass`, FLOOR((@row_number:=@row_number + 1)/%f) AS num FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN '%s' AND '%s' UNION SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `estimates` WHERE `userId` = '%s') `tmp`, (SELECT @row_number:=0) `row_num` GROUP BY `num`;", step, candle, startTime, endTime, userId);
+                        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass`, FLOOR((@row_number:=@row_number + 1)/%f) AS num FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `bitmex_data_%s_view` WHERE `timestamp` >= '%s' AND `timestamp` < '%s' UNION SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `estimates` WHERE `userId` = '%s') `tmp`, (SELECT @row_number:=0) `row_num` GROUP BY `num`;", step, candle, startTime, endTime, userId);
+                        console.log(sql);
                         dbConn.query(sql, null, function(error, results, fields) {
                             if (error) { console.log(error); }
 
