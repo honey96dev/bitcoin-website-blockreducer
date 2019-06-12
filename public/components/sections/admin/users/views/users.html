@@ -74,7 +74,7 @@
                                 {{n.username}}
                             </th>
                             <th scope="row">
-                                {{n.auth}}
+                                {{n.role}}
                             </th>
                             <th scope="row">
                                 <button class="btn btn-warning" ng-click="editInfo(n)" title="Edit" data-toggle="modal" data-target="#myModal">
@@ -111,43 +111,51 @@
                 <form class="form-horizontal alert alert-warning" id="editForm" ng-submit="UpdateInfo(currentUser)" > 
                 <h3 class="text-center">{{header}}</h3>
                     <div class="form-group">
-                        <label for="Name">First Name:</label>
-                        <input type="text" class="form-control" ng-model="currentUser.firstName" value="{{currentUser.firstName}}" autofocus required >
-                        </div> 
-                        <div class="form-group">
-                        <label for="Name">Last Name:</label>
-                        <input type="text" class="form-control" ng-model="currentUser.lastName" value="{{currentUser.lastName}}" autofocus required >
-                        </div>
-                    <div class="form-group">
-                    <label for="Email">Email Address:</label>
-                    <input type="email" class="form-control" ng-model="currentUser.email" value="{{currentUser.email}}" autofocus required >
+                        <label >First Name:</label>
+                        <input type="text" class="form-control" ng-model="currentUser.firstName"
+                               value="{{currentUser.firstName}}" autofocus required>
                     </div>
-                    
                     <div class="form-group">
-                    <label for="Username">Username</label>
-                    <input type="text" class="form-control" ng-model="currentUser.username" value="{{currentUser.username}}" autofocus required >
+                        <label >Last Name:</label>
+                        <input type="text" class="form-control" ng-model="currentUser.lastName"
+                               value="{{currentUser.lastName}}" autofocus required>
                     </div>
-                        <div class="form-group">
-                    <label for="auth">Role:</label>
-                    <label for="" class="radio-inline gender">
-                    <input type="radio" ng-model="currentUser.auth" value="user" >User
-                    </label>
-                    <label for="" class="radio-inline gender">
-                    <input type="radio" name="gender" ng-model="currentUser.auth" value="admin">Admin
-                    </label>
+                    <div class="form-group">
+                        <label >Email Address:</label>
+                        <input type="email" class="form-control" ng-model="currentUser.email"
+                               value="{{currentUser.email}}" autofocus required>
+                    </div>
+
+                    <div class="form-group">
+                        <label >Username</label>
+                        <input type="text" class="form-control" ng-model="currentUser.username"
+                               value="{{currentUser.username}}" autofocus required>
+                    </div>
+                    <div class="form-group">
+                        <label >Role:</label>
+                        <label class="checkbox gender">
+                            <input type="radio" ng-model="currentUser.auth" value="user">User
+                        </label>
+                        <label class="checkbox gender">
+                            <input type="radio" ng-model="currentUser.auth" value="admin">Admin
+                        </label>
                     </div>
                     <div id="pass" ng-show="pass">
                         <div class="form-group">
-                        <label for="Password" >Password</label>
-                        <input type="password" class="form-control" ng-model="currentUser.password" value="{{currentUser.password}}"  autofocus  >
+                            <label for="Password">Password</label>
+                            <input type="password" class="form-control" ng-model="currentUser.password"
+                                   value="{{currentUser.password}}" autofocus>
                         </div>
                         <div class="form-group">
-                        <label for="Username" >Password Confirm</label>
-                        <input type="password" class="form-control" ng-model="currentUser.passwordconfirm" value="{{currentUser.passwordconfirm}}" autofocus  >
+                            <label for="Username">Password Confirm</label>
+                            <input type="password" class="form-control" ng-model="currentUser.passwordconfirm"
+                                   value="{{currentUser.passwordconfirm}}" autofocus>
                         </div>
                     </div>
                     <div class="form-group">
-                    <button class="btn btn-warning" ng-disabled="empList.$invalid" ng-click="updateMsg(currentUser.emp_id)" autofocus required >{{btn_text}}</button>
+                        <button class="btn btn-warning" ng-disabled="empList.$invalid"
+                                ng-click="updateMsg(currentUser.emp_id)" autofocus required>{{btn_text}}
+                        </button>
                     </div>
                 </form> 
             </div>

@@ -12,7 +12,7 @@
         service.GetAll = GetAll;
         // service.GetById = GetById;
         // service.GetByUsername = GetByUsername;
-        // service.Create = Create;
+        service.Create = Create;
         service.Update = Update;
         service.Delete = Delete;
         service.ChangePassword = ChangePassword;
@@ -46,9 +46,9 @@
         //     return $http.get('/api/users/' + username).then(handleSuccess, handleError);
         // }
 
-        // function Create(user) {
-        //     return $http.post('/api/users', user).then(handleSuccess, handleError);
-        // }
+        function Create(user) {
+            return $http.post('/api/users', user).then(handleSuccess, handleError);
+        }
 
         function Update(user) {
             return $http.put('/api/users/' + user._id, user).then(handleSuccess, handleError);

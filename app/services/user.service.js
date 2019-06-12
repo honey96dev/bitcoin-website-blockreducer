@@ -161,7 +161,7 @@ function Delete(req, res) {
                 if (callback.affectedRows > 0) {
                     deferred.resolve();
                 } else {
-                    deferred.reject('Username "' + userParam.username + '" can not create your account');
+                    deferred.reject('Username "' + userParam.username + '" can not delete your account');
                 }
             });
         }
@@ -171,7 +171,7 @@ function Delete(req, res) {
 
 function DeleteUser(_id, callback) {
     var deferred = Q.defer(); 
-    var DeleteSql = "UPDATE users SET  state = 1 WHERE id = ?";
+    var DeleteSql = "DELETE FROM `users` WHERE id = ?";
     dbConn.query(DeleteSql, [_id], function(error, results, fields) {
         if(error){
             deferred.reject(error);
