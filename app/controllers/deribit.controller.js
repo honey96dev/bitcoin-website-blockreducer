@@ -14,11 +14,39 @@ router.get('/instruments', (req, res) => {
     let sql = sprintf("SELECT * FROM `deribit_instruments2` ORDER BY `creation_timestamp`;");
     dbConn.query(sql, undefined, (error, results, fields) => {
         if (error) {
-            res.status(200).send([]);
+            res.status(200).send({
+                data:[],
+                strikeKDECall: [],
+                strikeKDEPut: [],
+                bidKDECall: [],
+                bidKDEPut: [],
+                deltaKDECall: [],
+                deltaKDEPut: [],
+                gammaKDECall: [],
+                gammaKDEPut: [],
+                vegaKDECall: [],
+                vegaKDEPut: [],
+                spreadKDECall: [],
+                spreadKDEPut: [],
+            });
             return;
         }
         if (!results || results.length === 0) {
-            res.status(200).send([]);
+            res.status(200).send({
+                data:[],
+                strikeKDECall: [],
+                strikeKDEPut: [],
+                bidKDECall: [],
+                bidKDEPut: [],
+                deltaKDECall: [],
+                deltaKDEPut: [],
+                gammaKDECall: [],
+                gammaKDEPut: [],
+                vegaKDECall: [],
+                vegaKDEPut: [],
+                spreadKDECall: [],
+                spreadKDEPut: [],
+            });
             return;
         }
 
