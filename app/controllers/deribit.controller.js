@@ -14,6 +14,7 @@ router.get('/instruments', (req, res) => {
     let sql = sprintf("SELECT * FROM `deribit_instruments2` ORDER BY `creation_timestamp`;");
     dbConn.query(sql, undefined, (error, results, fields) => {
         if (error) {
+            console.warn(error);
             res.status(200).send({
                 data:[],
                 strikeKDECall: [],
