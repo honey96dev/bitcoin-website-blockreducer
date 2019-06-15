@@ -8,6 +8,7 @@ import pandas as pd
 import requests
 import seaborn as sns
 from sklearn.ensemble import IsolationForest
+import os
 
 
 def plot_deribit_instruments():
@@ -26,6 +27,9 @@ def plot_deribit_instruments():
         }
 
     try:
+        if not os.path.exists('./output'):
+            os.makedirs('./output')
+
         # 2. What options pricing data do we have?
         # reading and simply calculating
         # options_df = pd.read_json(rows)
