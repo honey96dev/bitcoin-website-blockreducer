@@ -220,6 +220,10 @@ const apiDataProc = (req, res, next) => {
             res.status(200).send([]);
             return;
         }
+        for (let result of results) {
+            result['expiration_timestamp'] = result['expiration_timestamp'].substr(0, 10);
+            result['creation_timestamp'] = result['creation_timestamp'].substr(0, 10);
+        }
         res.status(200).send(results);
     });
 };
