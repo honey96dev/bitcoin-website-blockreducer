@@ -1,17 +1,17 @@
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.ensemble import IsolationForest
-import requests
 import datetime
-import json
 import sched
 import time
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import requests
+import seaborn as sns
+from sklearn.ensemble import IsolationForest
+
 
 def plot_deribit_instruments():
-    url = 'http://localhost:8080/deribit/api/data'
+    url = 'http://blockreducer.com/deribit/api/data'
     params = {}
     r = requests.get(url=url, params=params)
 
