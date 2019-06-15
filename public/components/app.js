@@ -166,7 +166,7 @@
             clearTimeout($rootScope.pingTimeoutId);
         }
         if ($rootScope.socketIO.connected) $rootScope.socketIO.emit('onlineSignal', JSON.stringify({userId: $rootScope.userId}));
-        $rootScope.pingTimeoutId = setTimeout(pingToServer, 60000, $rootScope);
+        $rootScope.pingTimeoutId = setTimeout(pingToServer, 30000, $rootScope);
     }
 
     function run($http, $rootScope, $window, UserService) {

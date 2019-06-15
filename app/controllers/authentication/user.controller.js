@@ -145,16 +145,32 @@ function GetAllUsers(req, res, next) {
             res.status(200).send([]);
         }
         // let finalResults = [];
+        let isOnline;
+        // let timestamp = 0;
         for (let r of results) {
-            r['online'] = -1;
+            isOnline = false;
+            // timestamp = new Date().getTime();
             for (let socket of socketIOService.socketInfos) {
-                // console.log('userId', r.id);
-                if (r.id == socket.userId) {
-                    console.log('matched', r.id, socket.userId);
-                    r['online'] = Math.floor((new Date().getTime() - socket.timestamp.getTime()) / 60000);
+                // console.log('userId', r.id, socket);
+                if (r.id === socket.userId) {
+                    // console.log('matched', r.id, socket.userId);
+                    isOnline = true;
+                    // timestamp = socket.timestamp;
+                    break;
                 }
             }
-            let online = r['online'];
+            r['online'] = -1;
+            for (let user of socketIOService.userStatus) {
+                // console.log('userId', r.id);
+                if (r.id === user.id) {
+                    if (isOnline) {
+                        // r['online'] = (new Date().getTime() - user.timestamp) / 60000;
+                        r['online'] = Math.floor((new Date().getTime() - user.timestamp) / 60000);
+                    }
+                    break;
+                }
+            }
+            let online = 0 + r['online'];
             const onlineDays = online >= 1 ? Math.floor(online / 1440) : 0;
             online %= 1440;
             const onlineHours = online >= 1 ? Math.floor(online / 60) : 0;
