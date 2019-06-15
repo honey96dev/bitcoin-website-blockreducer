@@ -13,7 +13,7 @@
                 console.log(user);
                 $scope.data = user;
             });
-        }
+        };
 
         $scope.editInfo = function(info) {
             $scope.currentUser = {
@@ -30,7 +30,7 @@
             $scope.btn_text = "Update";
             $scope.flag = 'Update';
             
-        }
+        };
 
         $scope.currentUser;
         $scope.UpdateInfo = function(info){ 
@@ -62,7 +62,7 @@
                     alert("Password Confirm Error");
                 }
             } 
-        }
+        };
 
         $scope.deleteInfo = function(info){
             if(confirm("Are you really delete this user?")==true){
@@ -71,7 +71,7 @@
                         initcontroller();
                     });     
             } 
-        }
+        };
 
         $scope.createUser = function(){
             $scope.currentUser = [];
@@ -80,22 +80,22 @@
             $scope.btn_text = "Insert";
             $scope.flag = 'Insert';
             $scope.pass = true;
-        }
+        };
 
         $scope.orderByMe = function(x){
             $scope.myOrderBy = x;
-        }
+        };
 
         $scope.toMain = function() {
             $location.path('/admin');
-        }
+        };
 
         $scope.toEstimate = function() {
             $location.path('/admin-estimate');
-        }
+        };
 
         $scope.toChart = function() {
             $location.path('/admin-estimate-chart');
-        }
+        };
     }
 })();

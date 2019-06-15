@@ -47,6 +47,7 @@ if (cluster.isWorker) {
                 /\/api\/fft\/calculated\/*/,
                 /\/api\/fft\/id0\/*/,
                 /\/api\/fft\/id0_collection\/*/,
+                '/deribit/api/data',
             ]
         }));
 

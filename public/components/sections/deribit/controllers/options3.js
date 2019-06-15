@@ -3,34 +3,12 @@
 
     angular
         .module('BlockReducerApp')
-        .controller('DeribitOptionsController', ['$rootScope', '$scope', '$http', '$window', Controller]);
+        .controller('DeribitOptions3Controller', ['$rootScope', '$scope', '$http', '$window', Controller]);
 
     function Controller($rootScope, $scope, $http, $window) {
         $scope.timeoutId = null;
 
-        $scope.strikeKDECall = {
-            x: [],
-            y: [],
-            line: {
-                shape: 'spline',
-                dash: 'dash',
-            },
-            name: 'Call',
-            type: 'scatter',
-            fill: 'tozeroy',
-        };
-        $scope.strikeKDEPut = {
-            x: [],
-            y: [],
-            line: {
-                shape: 'spline',
-            },
-            name: 'Put',
-            type: 'scatter',
-            fill: 'tonexty',
-        };
-
-        $scope.bidStrikeCall = {
+        $scope.spreadStrikeCall = {
             x: [],
             y: [],
             name: 'Call',
@@ -42,7 +20,7 @@
             },
             type: 'scatter',
         };
-        $scope.bidStrikePut = {
+        $scope.spreadStrikePut = {
             x: [],
             y: [],
             name: 'Put',
@@ -55,29 +33,7 @@
             type: 'scatter',
         };
 
-        $scope.bidKDECall = {
-            x: [],
-            y: [],
-            line: {
-                shape: 'spline',
-                dash: 'dash',
-            },
-            name: 'Call',
-            type: 'scatter',
-            fill: 'tozeroy',
-        };
-        $scope.bidKDEPut = {
-            x: [],
-            y: [],
-            line: {
-                shape: 'spline',
-            },
-            name: 'Put',
-            type: 'scatter',
-            fill: 'tonexty',
-        };
-
-        $scope.deltaStrikeCall = {
+        $scope.spreadBidCall = {
             x: [],
             y: [],
             name: 'Call',
@@ -89,7 +45,7 @@
             },
             type: 'scatter',
         };
-        $scope.deltaStrikePut = {
+        $scope.spreadBidPut = {
             x: [],
             y: [],
             name: 'Put',
@@ -102,7 +58,7 @@
             type: 'scatter',
         };
 
-        $scope.deltaBidCall = {
+        $scope.spreadDeltaCall = {
             x: [],
             y: [],
             name: 'Call',
@@ -114,7 +70,7 @@
             },
             type: 'scatter',
         };
-        $scope.deltaBidPut = {
+        $scope.spreadDeltaPut = {
             x: [],
             y: [],
             name: 'Put',
@@ -127,7 +83,57 @@
             type: 'scatter',
         };
 
-        $scope.deltaKDECall = {
+        $scope.spreadGammaCall = {
+            x: [],
+            y: [],
+            name: 'Call',
+            mode: 'markers',
+            marker: {
+                symbol: "circle",
+                opacity: 0.7,
+                size: 7.5,
+            },
+            type: 'scatter',
+        };
+        $scope.spreadGammaPut = {
+            x: [],
+            y: [],
+            name: 'Put',
+            mode: 'markers',
+            marker: {
+                symbol: 134,
+                opacity: 0.7,
+                size: 9,
+            },
+            type: 'scatter',
+        };
+
+        $scope.spreadVegaCall = {
+            x: [],
+            y: [],
+            name: 'Call',
+            mode: 'markers',
+            marker: {
+                symbol: "circle",
+                opacity: 0.7,
+                size: 7.5,
+            },
+            type: 'scatter',
+        };
+        $scope.spreadVegaPut = {
+            x: [],
+            y: [],
+            name: 'Put',
+            mode: 'markers',
+            marker: {
+                symbol: 134,
+                opacity: 0.7,
+                size: 9,
+            },
+            type: 'scatter',
+        };
+
+        $scope.spreadKDECall = {
             x: [],
             y: [],
             line: {
@@ -138,7 +144,7 @@
             type: 'scatter',
             fill: 'tozeroy',
         };
-        $scope.deltaKDEPut = {
+        $scope.spreadKDEPut = {
             x: [],
             y: [],
             line: {
@@ -154,58 +160,63 @@
                 method: "GET",
                 url: "/deribit/instruments",
             }).then(function(res) {
-                $scope.strikeKDECall.x = [];
-                $scope.strikeKDECall.y = [];
-                $scope.strikeKDEPut.x = [];
-                $scope.strikeKDEPut.y = [];
-                $scope.bidStrikeCall.x = [];
-                $scope.bidStrikeCall.y = [];
-                $scope.bidStrikePut.x = [];
-                $scope.bidStrikePut.y = [];
-                $scope.bidKDECall.x = [];
-                $scope.bidKDECall.y = [];
-                $scope.bidKDEPut.x = [];
-                $scope.bidKDEPut.y = [];
-                $scope.deltaStrikeCall.x = [];
-                $scope.deltaStrikeCall.y = [];
-                $scope.deltaStrikePut.x = [];
-                $scope.deltaStrikePut.y = [];
-                $scope.deltaBidCall.x = [];
-                $scope.deltaBidCall.y = [];
-                $scope.deltaBidPut.x = [];
-                $scope.deltaBidPut.y = [];
-                $scope.deltaKDECall.x = [];
-                $scope.deltaKDECall.y = [];
-                $scope.deltaKDEPut.x = [];
-                $scope.deltaKDEPut.y = [];
+                $scope.spreadStrikeCall.x = [];
+                $scope.spreadStrikeCall.y = [];
+                $scope.spreadStrikePut.x = [];
+                $scope.spreadStrikePut.y = [];
+                $scope.spreadBidCall.x = [];
+                $scope.spreadBidCall.y = [];
+                $scope.spreadBidPut.x = [];
+                $scope.spreadBidPut.y = [];
+                $scope.spreadDeltaCall.x = [];
+                $scope.spreadDeltaCall.y = [];
+                $scope.spreadDeltaPut.x = [];
+                $scope.spreadDeltaPut.y = [];
+                $scope.spreadGammaCall.x = [];
+                $scope.spreadGammaCall.y = [];
+                $scope.spreadGammaPut.x = [];
+                $scope.spreadGammaPut.y = [];
+                $scope.spreadVegaCall.x = [];
+                $scope.spreadVegaCall.y = [];
+                $scope.spreadVegaPut.x = [];
+                $scope.spreadVegaPut.y = [];
+                $scope.spreadKDECall.x = [];
+                $scope.spreadKDECall.y = [];
+                $scope.spreadKDEPut.x = [];
+                $scope.spreadKDEPut.y = [];
                 const tmpData = res.data;
                 const limitSpread = 0.2;
                 for (let item of tmpData.data) {
                     let spread = item.best_ask_price - item.best_bid_price;
                     // if (spread > limitSpread) spread = 0;
                     if (item.type == 'Call') {
-                        $scope.bidStrikeCall.x.push(item.strike);
-                        $scope.bidStrikeCall.y.push(item.best_bid_price);
-
-                        $scope.deltaStrikeCall.x.push(item.strike);
-                        $scope.deltaStrikeCall.y.push(item.delta);
-                        $scope.deltaBidCall.x.push(item.best_bid_price);
-                        $scope.deltaBidCall.y.push(item.delta);
+                        $scope.spreadStrikeCall.x.push(item.strike);
+                        $scope.spreadStrikeCall.y.push(spread);
+                        $scope.spreadBidCall.x.push(item.best_bid_price);
+                        $scope.spreadBidCall.y.push(spread);
+                        $scope.spreadDeltaCall.x.push(item.delta);
+                        $scope.spreadDeltaCall.y.push(spread);
+                        $scope.spreadGammaCall.x.push(item.gamma);
+                        $scope.spreadGammaCall.y.push(spread);
+                        $scope.spreadVegaCall.x.push(item.vega);
+                        $scope.spreadVegaCall.y.push(spread);
                     }
                     if (item.type == 'Put') {
-                        $scope.bidStrikePut.x.push(item.strike);
-                        $scope.bidStrikePut.y.push(item.best_bid_price);
-
-                        $scope.deltaStrikePut.x.push(item.strike);
-                        $scope.deltaStrikePut.y.push(item.delta);
-                        $scope.deltaBidPut.x.push(item.best_bid_price);
-                        $scope.deltaBidPut.y.push(item.delta);
-
+                        $scope.spreadStrikePut.x.push(item.strike);
+                        $scope.spreadStrikePut.y.push(spread);
+                        $scope.spreadBidPut.x.push(item.best_bid_price);
+                        $scope.spreadBidPut.y.push(spread);
+                        $scope.spreadDeltaPut.x.push(item.delta);
+                        $scope.spreadDeltaPut.y.push(spread);
+                        $scope.spreadGammaPut.x.push(item.gamma);
+                        $scope.spreadGammaPut.y.push(spread);
+                        $scope.spreadVegaPut.x.push(item.vega);
+                        $scope.spreadVegaPut.y.push(spread);
                     }
                 }
 
-                //==========================Bid-Strike====
-                let data = [$scope.bidStrikeCall, $scope.bidStrikePut];
+                //==========================Spread-Strike====
+                let data = [$scope.spreadStrikeCall, $scope.spreadStrikePut];
 
                 let layout = {
                     dragmode: 'zoom',
@@ -217,45 +228,20 @@
                         type: 'linear'
                     },
                     yaxis: {
-                        title: 'Bid',
+                        title: 'Spread',
                         autorange: true,
                         type: 'linear'
                     },
                 };
 
                 try {
-                    Plotly.newPlot('plotly-div-deribit-bid-strike', data, layout, {responsive: true});
+                    Plotly.newPlot('plotly-div-deribit-spread-strike', data, layout, {responsive: true});
                 } catch (e) {
 
                 }
 
-                //==========================Delta-Strike====
-                data = [$scope.deltaStrikeCall, $scope.deltaStrikePut];
-
-                layout = {
-                    dragmode: 'zoom',
-                    showlegend: true,
-                    xaxis: {
-                        autorange: true,
-                        rangeslider: {},
-                        title: 'Strike',
-                        type: 'linear'
-                    },
-                    yaxis: {
-                        title: 'Delta',
-                        autorange: true,
-                        type: 'linear'
-                    },
-                };
-
-                try {
-                    Plotly.newPlot('plotly-div-deribit-delta-strike', data, layout, {responsive: true});
-                } catch (e) {
-
-                }
-
-                //==========================Delta-Bid====
-                data = [$scope.deltaBidCall, $scope.deltaBidPut];
+                //==========================Spread-Bid====
+                data = [$scope.spreadBidCall, $scope.spreadBidPut];
 
                 layout = {
                     dragmode: 'zoom',
@@ -267,95 +253,20 @@
                         type: 'linear'
                     },
                     yaxis: {
-                        title: 'Delta',
+                        title: 'Spread',
                         autorange: true,
                         type: 'linear'
                     },
                 };
 
                 try {
-                    Plotly.newPlot('plotly-div-deribit-delta-bid', data, layout, {responsive: true});
+                    Plotly.newPlot('plotly-div-deribit-spread-bid', data, layout, {responsive: true});
                 } catch (e) {
 
                 }
 
-                //==========================Strike-KDE====
-                // console.log(tmpData.strikeKDECall);
-                for (let item of tmpData.strikeKDECall) {
-                    $scope.strikeKDECall.x.push(item.value);
-                    $scope.strikeKDECall.y.push(item.density);
-                }
-                for (let item of tmpData.strikeKDEPut) {
-                    $scope.strikeKDEPut.x.push(item.value);
-                    $scope.strikeKDEPut.y.push(item.density);
-                }
-                data = [$scope.strikeKDEPut, $scope.strikeKDECall, ];
-
-                layout = {
-                    dragmode: 'zoom',
-                    showlegend: true,
-                    xaxis: {
-                        autorange: true,
-                        rangeslider: {},
-                        title: 'Strike',
-                        type: 'linear'
-                    },
-                    yaxis: {
-                        title: 'Strike',
-                        autorange: true,
-                        type: 'linear'
-                    },
-                };
-
-                try {
-                    Plotly.newPlot('plotly-div-deribit-strike-kde', data, layout, {responsive: true});
-                } catch (e) {
-
-                }
-
-                //===========================Bid-KDE=======================
-                for (let item of tmpData.bidKDECall) {
-                    $scope.bidKDECall.x.push(item.value);
-                    $scope.bidKDECall.y.push(item.density);
-                }
-                for (let item of tmpData.bidKDEPut) {
-                    $scope.bidKDEPut.x.push(item.value);
-                    $scope.bidKDEPut.y.push(item.density);
-                }
-                data = [$scope.bidKDEPut, $scope.bidKDECall, ];
-
-                layout = {
-                    dragmode: 'zoom',
-                    showlegend: true,
-                    xaxis: {
-                        autorange: true,
-                        rangeslider: {},
-                        title: 'Bid',
-                        type: 'linear'
-                    },
-                    yaxis: {
-                        title: 'Bid',
-                        autorange: true,
-                        type: 'linear'
-                    },
-                };
-
-                try {
-                    Plotly.newPlot('plotly-div-deribit-bid-kde', data, layout, {responsive: true});
-                } catch (e) {
-
-                }
-
-                //===========================Delta-KDE=======================
-                for (let item of tmpData.deltaKDECall) {
-                    $scope.deltaKDECall.x.push(item.value);
-                    $scope.deltaKDECall.y.push(item.density);
-                }
-                for (let item of tmpData.deltaKDEPut) {
-                    $scope.deltaKDEPut.x.push(item.value);
-                    $scope.deltaKDEPut.y.push(item.density);
-                }
-                data = [$scope.deltaKDEPut, $scope.deltaKDECall, ];
+                //==========================Spread-Delta====
+                data = [$scope.spreadDeltaCall, $scope.spreadDeltaPut];
 
                 layout = {
                     dragmode: 'zoom',
@@ -367,18 +278,100 @@
                         type: 'linear'
                     },
                     yaxis: {
-                        title: 'Delta',
+                        title: 'Spread',
                         autorange: true,
                         type: 'linear'
                     },
                 };
 
                 try {
-                    Plotly.newPlot('plotly-div-deribit-delta-kde', data, layout, {responsive: true});
+                    Plotly.newPlot('plotly-div-deribit-spread-delta', data, layout, {responsive: true});
                 } catch (e) {
 
                 }
 
+                //==========================Spread-Gamma====
+                data = [$scope.spreadGammaCall, $scope.spreadGammaPut];
+
+                layout = {
+                    dragmode: 'zoom',
+                    showlegend: true,
+                    xaxis: {
+                        autorange: true,
+                        rangeslider: {},
+                        title: 'Gamma',
+                        type: 'linear'
+                    },
+                    yaxis: {
+                        title: 'Spread',
+                        autorange: true,
+                        type: 'linear'
+                    },
+                };
+
+                try {
+                    Plotly.newPlot('plotly-div-deribit-spread-gamma', data, layout, {responsive: true});
+                } catch (e) {
+
+                }
+
+                //==========================Spread-Vega====
+                data = [$scope.spreadVegaCall, $scope.spreadVegaPut];
+
+                layout = {
+                    dragmode: 'zoom',
+                    showlegend: true,
+                    xaxis: {
+                        autorange: true,
+                        rangeslider: {},
+                        title: 'Vega',
+                        type: 'linear'
+                    },
+                    yaxis: {
+                        title: 'Spread',
+                        autorange: true,
+                        type: 'linear'
+                    },
+                };
+
+                try {
+                    Plotly.newPlot('plotly-div-deribit-spread-vega', data, layout, {responsive: true});
+                } catch (e) {
+
+                }
+
+                //===========================Spread-KDE=======================
+                for (let item of tmpData.spreadKDECall) {
+                    $scope.spreadKDECall.x.push(item.value);
+                    $scope.spreadKDECall.y.push(item.density);
+                }
+                for (let item of tmpData.spreadKDEPut) {
+                    $scope.spreadKDEPut.x.push(item.value);
+                    $scope.spreadKDEPut.y.push(item.density);
+                }
+                data = [$scope.spreadKDEPut, $scope.spreadKDECall, ];
+
+                layout = {
+                    dragmode: 'zoom',
+                    showlegend: true,
+                    xaxis: {
+                        autorange: true,
+                        rangeslider: {},
+                        title: 'Spread',
+                        type: 'linear'
+                    },
+                    yaxis: {
+                        title: 'Spread',
+                        autorange: true,
+                        type: 'linear'
+                    },
+                };
+
+                try {
+                    Plotly.newPlot('plotly-div-deribit-spread-kde', data, layout, {responsive: true});
+                } catch (e) {
+
+                }
                 if ($rootScope.timeoutId != null) {
                     clearTimeout($scope.timeoutId);
                 }

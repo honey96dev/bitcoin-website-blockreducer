@@ -119,6 +119,24 @@
                 // data: { activeTab: 'fftChart' }
             })
 
+            .state('deribit-options2', {
+                url: '/deribit-options2',
+                templateUrl: './components/sections/deribit/views/options2.html',
+                // templateUrl: './components/sections/admin/estimate-chart/views/estimate-chart.html',
+                controller: 'DeribitOptions2Controller',
+                controllerAs: 'vm',
+                // data: { activeTab: 'fftChart' }
+            })
+
+            .state('deribit-options3', {
+                url: '/deribit-options3',
+                templateUrl: './components/sections/deribit/views/options3.html',
+                // templateUrl: './components/sections/admin/estimate-chart/views/estimate-chart.html',
+                controller: 'DeribitOptions3Controller',
+                controllerAs: 'vm',
+                // data: { activeTab: 'fftChart' }
+            })
+
             .state('deribit-result', {
                 url: '/deribit-result',
                 templateUrl: './components/sections/deribit/views/result.html',
