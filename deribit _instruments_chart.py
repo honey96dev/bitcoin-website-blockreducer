@@ -169,7 +169,7 @@ def plot_deribit_instruments():
         plt.ylabel(col_names[it_y_])
         plt.legend(fontsize='medium')
 
-        plt.savefig('output.png', dpi=200)
+        plt.savefig('output/output.png', dpi=200)
         plt.show()
 
         # plotting graph
