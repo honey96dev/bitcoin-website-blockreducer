@@ -8,6 +8,7 @@ var bodyParser = require('body-parser');
 
 
 var config = require('./_core/config');
+const socketIOService = require('./app/services/socketIO.service');
 
 var httpPort = process.env.PORT || config.server.httpPort;
 var cluster = require('cluster');
@@ -69,6 +70,9 @@ if (cluster.isWorker) {
     var cryptoMarkets = require('./exchange/routes/cryptoMarkets');
     cryptoMarkets.setSocketIO(io);
 
+    socketIOService.setSocketIO(io);
+    socketIOService.init();
+    
     httpServer.listen(httpPort, function() {
         console.log((new Date()) + '=> Http Sever running on http://' + httpServer.address().address + ':' + httpPort);
     });

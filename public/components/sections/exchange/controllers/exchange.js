@@ -10,35 +10,25 @@
 
     function Controller($rootScope, $scope, $http, $sce, $location, UserService) {
         $rootScope.exchangeScope = $scope;
-        if (!$rootScope.socketIO) {
-            console.log('new create');
-            socket = io('localhost:8080',{
-                reconnection: true,
-                reconnectionDelay: 2000,
-                reconnectionDelayMax: 4000,
-                reconnectionAttempts: Infinity
-            });
-            $rootScope.socketIO = socket;
 
-            socket.on('marketHistory', (history) => {
-                //console.log(history);
+        socket = $rootScope.socketIO;
+        socket.off('marketHistory');
+        socket.on('marketHistory', (history) => {
+            // console.log('2', history);
 
-                let rows = history.reverse().slice(0, $scope.limitCount);
-                for (let r in rows) {
-                    rows[r].class = "streamingListRow " + (rows[r].amount > 99999 ? 'Dark' : '') + " " + (rows[r].marker ? 'Sell' : 'Buy');
-                    rows[r].amount1 = rows[r].amount > 999 ? (rows[r].amount / 1000).toFixed(0) + 'k' : rows[r].amount;
-                    rows[r].date = new Date(rows[r].timestamp * 1000).toUTCString();
-                }
-                $rootScope.exchangeScope = $scope.realtimes = rows;
-                // $scope.randomNumber = Math.random();
-                // $('#randomNumber').val(Math.random());
-                $rootScope.$digest();
-                // app.reRenderUIPart();
-                // console.log($scope.realtimes);
-            });
-        } else {
-            socket = $rootScope.socketIO;
-        }
+            let rows = history.reverse().slice(0, $scope.limitCount);
+            for (let r in rows) {
+                rows[r].class = "streamingListRow " + (rows[r].amount > 99999 ? 'Dark' : '') + " " + (rows[r].marker ? 'Sell' : 'Buy');
+                rows[r].amount1 = rows[r].amount > 999 ? (rows[r].amount / 1000).toFixed(0) + 'k' : rows[r].amount;
+                rows[r].date = new Date(rows[r].timestamp * 1000).toUTCString();
+            }
+            $rootScope.exchangeScope = $scope.realtimes = rows;
+            // $scope.randomNumber = Math.random();
+            // $('#randomNumber').val(Math.random());
+            $rootScope.$digest();
+            // app.reRenderUIPart();
+            // console.log($scope.realtimes);
+        });
 
 
         $scope.sourceIds = [];

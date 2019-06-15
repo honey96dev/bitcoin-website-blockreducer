@@ -3,7 +3,8 @@ const sprintfJs = require('sprintf-js');
 const sprintf = sprintfJs.sprintf;
 const dbConn = require('../../../_core/dbConn');
 const bcrypt = require('bcryptjs');
-const userService = require('./../../services/user.service');
+const userService = require('../../services/user.service');
+const socketIOService = require('../../services/socketIO.service');
 /**
  * Routes
  */
@@ -66,38 +67,38 @@ function CreateUser(req, res, next) {
 
 function RegisterUser(req, res) {
     userService.Create(req)
-        .then(function() {
+        .then(function () {
             res.sendStatus(200);
         })
-        .catch(function(error) {
+        .catch(function (error) {
             res.status(400).send(error);
         });
 }
 
 function AuthenticateUser(req, res) {
     userService.Authenticate(req.body.email, req.body.password)
-        .then(function(data) {
+        .then(function (data) {
             if (data) {
                 res.send(data);
             } else {
                 res.status(401).send('User Emaiil or password is incorrect');
             }
         })
-        .catch(function(err) {
+        .catch(function (err) {
             res.status(400).send(err);
         });
 }
 
 function GetCurrentUser(req, res) {
     userService.GetById(req.user.sub)
-        .then(function(user) {
+        .then(function (user) {
             if (user) {
                 res.send(user);
             } else {
                 res.sendStatus(404);
             }
         })
-        .catch(function(err) {
+        .catch(function (err) {
             res.status(400).send(err);
         });
 }
@@ -113,68 +114,91 @@ function UpdateUser(req, res) {
         });
 }
 
-function DeleteUser(req, res){
+function DeleteUser(req, res) {
     userService.DeleteUser(req)
-    .then(function(){
-        res.sendStatus(200);
-    })
-    .catch(function(err){
-        res.status(400).send(err);
-    });
+        .then(function () {
+            res.sendStatus(200);
+        })
+        .catch(function (err) {
+            res.status(400).send(err);
+        });
 }
 
-function ChangePassword(req, res){
+function ChangePassword(req, res) {
     var data = req.body;
     userService.ChangePassword(req, data)
-    .then(function(data){
-        if(data){
-            res.sendStatus(200).send(data);
-        }
-    })
-    .catch(function(error){
-        res.status(400).send(error);
-    });
+        .then(function (data) {
+            if (data) {
+                res.sendStatus(200).send(data);
+            }
+        })
+        .catch(function (error) {
+            res.status(400).send(error);
+        });
 }
 
-function GetAllUsers(req, res, next){
+function GetAllUsers(req, res, next) {
     let sql = sprintf("SELECT U.*, IF(U.auth='admin', 'Admin', 'User') `role` FROM `users` U;");
     dbConn.query(sql, undefined, (error, results, fields) => {
-         if (error) {
-             console.warn(error);
-             res.status(200).send([]);
-         }
-         // let finalResults = [];
-         // for (let r in results) {
-         //     // finalResults.push({
-         //     //
-         //     // })
-         //     results[r].auth = results[r].auth == 'admin' ? 'Admin' : 'User';
-         // }
-         res.status(200).send(results);
+        if (error) {
+            console.warn(error);
+            res.status(200).send([]);
+        }
+        // let finalResults = [];
+        for (let r of results) {
+            r['online'] = -1;
+            for (let socket of socketIOService.socketInfos) {
+                // console.log('userId', r.id);
+                if (r.id == socket.userId) {
+                    console.log('matched', r.id, socket.userId);
+                    r['online'] = Math.floor((new Date().getTime() - socket.timestamp.getTime()) / 60000);
+                }
+            }
+            let online = r['online'];
+            const onlineDays = online >= 1 ? Math.floor(online / 1440) : 0;
+            online %= 1440;
+            const onlineHours = online >= 1 ? Math.floor(online / 60) : 0;
+            online %= 60;
+            const onlineMinutes = online;
+            if (onlineDays > 0) {
+                r['onlineString'] = sprintf("%dday(s) %dhr(s) %dmin(s)", onlineDays, onlineHours, onlineMinutes);
+            } else if (onlineHours > 0) {
+                r['onlineString'] = sprintf("%dhr(s) %dmin(s)", onlineHours, onlineMinutes);
+            } else if (onlineMinutes > 0) {
+                r['onlineString'] = sprintf("%dmin(s)", onlineMinutes);
+            } else if (r['online'] === -1) {
+                r['onlineString'] = sprintf('Offline');
+            } else {
+                r['onlineString'] = sprintf('Just online');
+            }
+            // finalResults.push({})
+            // results[r].auth = results[r].auth == 'admin' ? 'Admin' : 'User';
+        }
+        res.status(200).send(results);
     });
 }
 
-function GetDateTime(req, res){
+function GetDateTime(req, res) {
     userService.GetDateTime(req)
-    .then(function(data){
-      
-        if(data){ 
-            res.send(data);
-        }
-    })
-    .catch(function(error){
-        res.status(400).send(error);
-    });
+        .then(function (data) {
+
+            if (data) {
+                res.send(data);
+            }
+        })
+        .catch(function (error) {
+            res.status(400).send(error);
+        });
 }
 
-function GetEstimateData(req, res){
+function GetEstimateData(req, res) {
     userService.GetEstimateData(req)
-    .then(function(data){
-        if(data){
-            res.send(data);
-        }
-    })
-    .catch(function(error){
-        res.status(400).send(error);
-    });
+        .then(function (data) {
+            if (data) {
+                res.send(data);
+            }
+        })
+        .catch(function (error) {
+            res.status(400).send(error);
+        });
 }

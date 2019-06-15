@@ -161,6 +161,14 @@
             });
     }
 
+    function pingToServer($rootScope) {
+        if ($rootScope.pingTimeoutId) {
+            clearTimeout($rootScope.pingTimeoutId);
+        }
+        if ($rootScope.socketIO.connected) $rootScope.socketIO.emit('onlineSignal', JSON.stringify({userId: $rootScope.userId}));
+        $rootScope.pingTimeoutId = setTimeout(pingToServer, 60000, $rootScope);
+    }
+
     function run($http, $rootScope, $window, UserService) {
         // add JWT token as default auth header
         $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.jwtToken;
@@ -171,6 +179,8 @@
         });
 
         UserService.GetCurrent().then(function(user) {
+            console.log(user);
+            $rootScope.userId  = user.id;
             $rootScope.username  = user.username;
             $rootScope.auth = user.auth;
             var role = user.auth; 
@@ -181,6 +191,18 @@
             }
             $('p#username').text($rootScope.username);
             $('span#user-role').text($rootScope.auth);
+            // console.log(user);
+
+            $rootScope.socketIO = io('localhost:8080',{
+                reconnection: true,
+                reconnectionDelay: 2000,
+                reconnectionDelayMax: 4000,
+                reconnectionAttempts: Infinity
+            });
+
+            $rootScope.socketIO.on('connect', function () {
+                pingToServer($rootScope);
+            });
         });
     }
 

@@ -52,6 +52,7 @@
                             <th scope="col">Email</th>
                             <th scope="col">User Name</th>
                             <th scope="col">Role</th>
+                            <th scope="col">Status</th>
                             <th scope="col">Edit</th>
                             <th scope="col">Delete</th>
                         </tr>
@@ -77,6 +78,9 @@
                                 {{n.role}}
                             </th>
                             <th scope="row">
+                                {{n.onlineString}}
+                            </th>
+                            <th scope="row">
                                 <button class="btn btn-warning" ng-click="editInfo(n)" title="Edit" data-toggle="modal" data-target="#myModal">
                                     <span class="fa fa-edit"></span>
                                 </button>
@@ -85,9 +89,6 @@
                                 <button class="btn btn-danger" ng-click="deleteInfo(n)" title="Delete">
                                     <span class="fa  fa-trash"></span>
                                 </button>
-                            </th>
-                            <th scope="row">
-                                {{n.time}}
                             </th>
                         <tr>
                     </tbody>

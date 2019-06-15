@@ -10,6 +10,7 @@
         
         function initcontroller() {
             UserService.GetAll().then(function (user) {
+                console.log(user);
                 $scope.data = user;
             });
         }
