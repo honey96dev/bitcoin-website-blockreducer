@@ -52,7 +52,7 @@ let service = {
                     });
                 }
             });
-            console.info('service.socketInfos-connect', service.socketInfos);
+            // console.info('service.socketInfos-connect', service.socketInfos);
 
             socket.on('disconnect', function () {
                 // console.log('disconnect', socket.id);
