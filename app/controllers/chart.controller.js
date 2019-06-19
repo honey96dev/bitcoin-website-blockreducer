@@ -1,23 +1,15 @@
 var router = require('express').Router();
 var priceService = require('./../services/price.service');
-var volumeService = require('./../services/volume.service');
-var fftService = require('./../services/fft.service');
 var tradeService = require('./../services/trade.service');
 var hiddenService = require('./../services/hidden.service');
 var dbConn = require('../../_core/dbConn');
 const sprintfJs = require('sprintf-js');
-const sprintf = sprintfJs.sprintf,
-    vsprintf = sprintfJs.vsprintf;
-const fftJs = require('fft-js');
+const sprintf = sprintfJs.sprintf;
 
 router.post('/price/init', GetLast1MonthPrice);
 router.post('/price/custom', GetCustomizePrice);
 router.post('/volume/init', GetVolumeChart);
 router.post('/volume/custom', GetVolumeChart2);
-router.post('/fft/init', GetLast1MonthFFT);
-// router.post('/fft/custom', GetCustomizeFFT);
-router.post('/fft/estimate', GetEstimateFFT);
-router.post('/fft/customize', GetDataByCandle);
 router.post('/hidden/day', GetLast1DayHidden);
 router.post('/hidden/year', GetLast1YearHidden);
 router.post('/trade/init', GetLast7dayTrade);
@@ -198,109 +190,6 @@ function GetVolumeChart2(req, res) {
         res.send(final);
     });
 }
-
-function GetCustomizeVolume(req, res) {
-    // res.json({});
-    // return;
-    var startTime = req.body.startTime;
-    var endTime = req.body.endTime;
-    volumeService.GetCustomizeVolume(startTime, endTime)
-        .then(function(data) {
-            if(data) {
-                res.json(data);
-            } else {
-                res.sendStatus(404);
-            }
-        })
-        .catch(function(error) {
-            res.status(400).send(error);
-        });
-}
-
-function GetLast1MonthFFT(req, res) {
-    // res.json({});
-    // return;
-    fftService.GetLast1MonthFFT()
-        .then(function(data) {
-            if(data) {
-                res.json(data);
-            } else {
-                res.sendStatus(404);
-            }
-        })
-        .catch(function(error) {
-            res.status(400).send(error);
-        });
-}
-
-function GetDataByCandle(req, res) {
-    // res.json({});
-    // return;
-    var startTime = (new Date( req.body.inputData.startTime)).toISOString();
-    var endTime = (new Date(req.body.inputData.endTime)).toISOString();
-    var candle = req.body.inputData.candle;
-    // fftService.GetDataByCandle(candle, startTime, endTime)
-    //     .then(function(data) {
-    //         if(data) {
-    //             res.json(data);
-    //         } else {
-    //             res.sendStatus(404);
-    //         }
-    //     })
-    //     .catch(function(error) {
-    //         res.status(400).send(error);
-    //     });
-
-    fftService.GetCustomizeFFT(candle, startTime, endTime)
-        .then(function(data) {
-            if(data) {
-                res.json(data);
-            } else {
-                res.sendStatus(404);
-            }
-        })
-        .catch(function(error) {
-            res.status(400).send(error);
-        });
-}
-
-function GetEstimateFFT(req, res) {
-    // res.json({});
-    // return;
-    let candle = null;
-    if (req.body.data && req.body.data.candle) {
-        candle = req.body.data.candle;
-    }
-
-    let endTime = new Date().toISOString();
-    if (req.body.data && req.body.data.endTime) {
-        endTime = (new Date(req.body.data.endTime)).toISOString();
-    }
-    endTime = new Date(endTime);
-    endTime.setMinutes(Math.floor(endTime.getMinutes() / 5) * 5);
-    endTime = endTime.toISOString();
-
-    let startTime = new Date();
-    startTime.setFullYear(startTime.getFullYear() - 4);
-    startTime = startTime.toISOString();
-    if (req.body.data && req.body.data.startTime) {
-        startTime = (new Date(req.body.data.startTime)).toISOString();
-    }
-    let estimates = req.body.estimates;
-    // console.log('GetEstimateFFT', req.body, startTime, endTime, estimates);
-    fftService.GetEstimateFFT(candle, startTime, endTime, estimates, req.session.userId)
-        .then(function(data) {
-            if(data) {
-                res.json(data);
-            } else {
-                res.sendStatus(404);
-            }
-        })
-        .catch(function(error) {
-            res.status(400).send(error);
-        });
-}
-
 
 function GetLast1DayHidden(req, res) {
     // res.json({});

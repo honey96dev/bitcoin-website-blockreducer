@@ -1,4 +1,3 @@
-var express = require('express');
 var router = require('express').Router();
 var dbConn = require('../../_core/dbConn');
 const sprintfJs = require('sprintf-js');

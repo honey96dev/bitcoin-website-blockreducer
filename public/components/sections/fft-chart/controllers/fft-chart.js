@@ -41,6 +41,7 @@
         };
 
         $scope.arrayCandles = [
+            // {id: '1m', value: "1 Minute"},
             {id: '5m', value: "5 Minute"},
             // {id: 2, value: "10 Minute"},
             // {id: 3, value: "30 Minute"},
@@ -48,13 +49,13 @@
             // {id: 5, value: "3 Hour"},
             // {id: 6, value: "1 Day"}
         ];
-     
+
         initcontroller();
-        
+
         function initcontroller() {
             $http({
                 method: "POST",
-                url: "/chart/fft/init",
+                url: "/volatility/init",
                 data: {
                     str: "init"
                 }
@@ -86,7 +87,7 @@
                     // $scope.trace2.y.push((obj.high - obj.low) / obj.close);
                     $scope.trace3.y.push(item.highPass);
                 }
-                
+
                 var data1 = [$scope.trace1, $scope.trace2];
 
                 var layout1 = {
@@ -155,7 +156,7 @@
                 Plotly.newPlot('myFFTDiv', data2, layout2);
 
                 // var data2 = [$scope.trace2];
-               
+
                 // var layout2 = {
                 //     yaxis: {
                 //       title: 'yaxis2 title',
@@ -178,17 +179,17 @@
             $scope.estimate.push(row);
             $scope.enabledEdit[$scope.estimate.length - 1] = false;
         };
-        
+
         $scope.EditEstimate = function(index) {
             console.log("edit index" + index);
             $scope.enabledEdit[index] = true;
         };
-        
+
         $scope.DeleteEstimate = function(index) {
             $scope.estimate.splice(index, 1);
         };
-        
-        
+
+
         $scope.GenerateChart = function(data) {
             var estimates = [];
             for (var obj of $scope.estimate) {
@@ -198,7 +199,7 @@
             if (estimates.length > 0) {
                 $http({
                     method: "POST",
-                    url: "/chart/fft/estimate",
+                    url: "/volatility/estimate",
                     async: false,
                     data: {
                         data: data,
@@ -318,10 +319,16 @@
         };
 
         $scope.CustomizeChart = function(inputData) {
+            let candle = '5m';
+            if (!!inputData.candle) {
+                candle = inputData.candle;
+            }
             $http({
-                method: 'POST',
-                url: '/chart/fft/customize',
-                data: { inputData }
+                method: 'GET',
+                url: '/volatility/' + candle,
+                data: {
+                    inputData,
+                }
             }).then(function(res) {
                 var tmpData = res.data;
 
@@ -430,7 +437,7 @@
                 //     }
                 // };
                 // Plotly.newPlot('myFFTDiv', data2, layout2);
-           
+
             });
         };
 

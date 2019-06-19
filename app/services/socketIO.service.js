@@ -34,7 +34,7 @@ let service = {
                 let flag = true;
                 for (let i = 0; i < cnt; i++) {
                     if (service.userStatus[i].id === data.userId) {
-                        console.log('service.userStatus', service.userStatus);
+                        // console.log('service.userStatus', service.userStatus);
                         service.userStatus[i] = {
                             id: data.userId,
                             timestamp: (new Date().getTime() - service.userStatus[i].timestamp2 > 60000) ? new Date().getTime() : service.userStatus[i].timestamp,
@@ -65,7 +65,7 @@ let service = {
                         break;
                     }
                 }
-                console.info('service.socketInfos-disconnect', service.socketInfos);
+                // console.info('service.socketInfos-disconnect', service.socketInfos);
             });
         });
     },

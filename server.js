@@ -43,11 +43,9 @@ if (cluster.isWorker) {
             path: [
                 '/api/users/authenticate',
                 '/api/users/register',
-                '/chart/volume/init',
                 /\/api\/fft\/calculated\/*/,
                 /\/api\/fft\/id0\/*/,
                 /\/api\/fft\/id0_collection\/*/,
-                '/deribit/api/data',
             ]
         }));
 
@@ -56,6 +54,7 @@ if (cluster.isWorker) {
     app.use('/register', require('./app/controllers/authentication/register.controller'));
     app.use('/login', require('./app/controllers/authentication/login.controller'));
     app.use('/chart', require('./app/controllers/chart.controller'));
+    app.use('/volatility', require('./app/controllers/fft.controller'));
     app.use('/api/users', require('./app/controllers/authentication/user.controller'));
     app.use('/api/fft', apis);
     app.use('/app', require('./app/controllers/app.controller'));
@@ -73,7 +72,7 @@ if (cluster.isWorker) {
 
     socketIOService.setSocketIO(io);
     socketIOService.init();
-    
+
     httpServer.listen(httpPort, function() {
         console.log((new Date()) + '=> Http Sever running on http://' + httpServer.address().address + ':' + httpPort);
     });
