@@ -37,9 +37,6 @@
         }
 
         $scope.CustomizeChart = function() {
-            var startTime = new Date($scope.startTime).toISOString();
-            var endTime = new Date($scope.endTime).toISOString();
-
             if ($scope.startTime > $scope.endTime) {
                 $window.alert('Please Check your "Start Time"!');
             } else {
@@ -47,8 +44,8 @@
                     method: "POST",
                     url: "/chart/price/custom",
                     data: {
-                        startTime: startTime,
-                        endTime: endTime,
+                        startTime: $scope.startTime,
+                        endTime: $scope.endTime,
                         timeZone: $scope.timeZone,
                     }
                 }).then(function(res) {
