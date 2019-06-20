@@ -35,9 +35,10 @@ function GetLast1MonthPrice(req, res) {
 function GetCustomizePrice(req, res) {
     // res.json({});
     // return;
-    var startTime = req.body.startTime;
-    var endTime = req.body.endTime;
-    priceService.GetCustomizePrice(startTime, endTime)
+    let startTime = req.body.startTime;
+    let endTime = req.body.endTime;
+    let timeZone = req.body.timeZone;
+    priceService.GetCustomizePrice(startTime, endTime, timeZone)
         .then(function(data) {
             if(data) {
                 res.json(data);
@@ -60,6 +61,7 @@ function GetVolumeChart(req, res) {
     if (endTime && endTime.length > 0) {
         endTime = (new Date(endTime)).toISOString();
     }
+    let timeZone = req.query.timeZone;
     console.log('interval', interval);
     const acceptInterval = ['1m', '5m', '1h'];
     if (acceptInterval.indexOf(interval) === -1) {
@@ -71,6 +73,8 @@ function GetVolumeChart(req, res) {
     }
     let sql;
     if (startTime && startTime.length > 0) {
+        startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
         sql = sprintf("SELECT V.timestamp, IFNULL(I.open, 0) `open`, V.volume, IFNULL(W.vwap_seed, 1) `vwap_seed`, IFNULL(I.num_3, 0) `num_3`, IFNULL(I.num_6, 0) `num_6`, IFNULL(I.num_9, 0) `num_9`, IFNULL(I.num_100, 0) `num_100` FROM (SELECT `timestamp`, IFNULL(`volume`, 0) `volume` FROM `volume_%s` WHERE `timestamp` BETWEEN '%s' AND '%s' ORDER BY `timestamp` DESC LIMIT 2000) `V` LEFT JOIN `vwap_%s` W ON W.timestamp = V.timestamp LEFT JOIN `id0_%s` I ON I.timestamp = V.timestamp ORDER BY V.timestamp ASC;", interval, startTime, endTime, interval, interval);
     } else {
         sql = sprintf("SELECT V.timestamp, IFNULL(I.open, 0) `open`, V.volume, IFNULL(W.vwap_seed, 1) `vwap_seed`, IFNULL(I.num_3, 0) `num_3`, IFNULL(I.num_6, 0) `num_6`, IFNULL(I.num_9, 0) `num_9`, IFNULL(I.num_100, 0) `num_100` FROM (SELECT `timestamp`, IFNULL(`volume`, 0) `volume` FROM `volume_%s` ORDER BY `timestamp` DESC LIMIT 2000) `V` LEFT JOIN `vwap_%s` W ON W.timestamp = V.timestamp LEFT JOIN `id0_%s` I ON I.timestamp = V.timestamp ORDER BY V.timestamp ASC;", interval, interval, interval);
@@ -99,6 +103,7 @@ function GetVolumeChart(req, res) {
         let lastNum6 = 0;
         let lastNum9 = 0;
         let lastNum100 = 0;
+        let volumeSum = 0;
         for (let item of results) {
             if (item.open != 0) {
                 lastOpen = item.open;
@@ -115,10 +120,12 @@ function GetVolumeChart(req, res) {
             if (item.num_100 != 0) {
                 lastNum100 = item.num_100;
             }
+            volumeSum += item.volume;
             final.push({
                 timestamp: item.timestamp,
                 open: lastOpen,
                 volume: item.volume,
+                volumeSum: volumeSum,
                 num_3: item.vwap_seed * lastNum3,
                 num_6: item.vwap_seed * lastNum6,
                 num_9: item.vwap_seed * lastNum9,
@@ -140,6 +147,7 @@ function GetVolumeChart2(req, res) {
     if (endTime && endTime.length > 0) {
         endTime = (new Date(endTime)).toISOString();
     }
+    let timeZone = req.query.timeZone;
     console.log('interval', interval);
     const acceptInterval = ['1m', '5m', '1h'];
     if (acceptInterval.indexOf(interval) === -1) {
@@ -151,6 +159,8 @@ function GetVolumeChart2(req, res) {
     }
     let sql;
     if (startTime && startTime.length > 0) {
+        startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
         sql = sprintf("SELECT I.*, IFNULL(B.open, 0) `open` FROM (SELECT `timestamp`, `openInterest`, `openValue` FROM `interested_n_value_%s` WHERE `timestamp` BETWEEN '%s' AND '%s' ORDER BY `timestamp` DESC LIMIT 2000) `I` LEFT JOIN `bitmex_data_%s_view` B ON B.timestamp = I.timestamp ORDER BY I.timestamp ASC;", interval, startTime, endTime, interval);
     } else {
         sql = sprintf("SELECT I.*, IFNULL(B.open, 0) `open` FROM (SELECT `timestamp`, `openInterest`, `openValue` FROM `interested_n_value_%s` WHERE `timestamp` ORDER BY `timestamp` DESC LIMIT 2000) `I` LEFT JOIN `bitmex_data_%s_view` B ON B.timestamp = I.timestamp ORDER BY I.timestamp ASC;", interval, interval);
@@ -203,8 +213,9 @@ function GetLast1DayHidden(req, res) {
     if (endTime && endTime.length > 0) {
         endTime = (new Date(endTime)).toISOString();
     }
+    let timeZone = req.body.params.timeZone;
     console.log(startTime, endTime);
-    hiddenService.GetLast1DayHidden(startTime, endTime)
+    hiddenService.GetLast1DayHidden(startTime, endTime, timeZone)
         .then(function(data) {
             if(data) {
                 res.json(data);
@@ -221,7 +232,16 @@ function GetLast1DayHidden(req, res) {
 function GetLast1YearHidden(req, res) {
     // res.json({});
     // return;
-    hiddenService.GetLast1YearHidden()
+    let startTime = req.body.params.startTime;
+    let endTime = req.body.params.endTime;
+    if (startTime && startTime.length > 0) {
+        startTime = (new Date(startTime)).toISOString();
+    }
+    if (endTime && endTime.length > 0) {
+        endTime = (new Date(endTime)).toISOString();
+    }
+    let timeZone = req.body.params.timeZone;
+    hiddenService.GetLast1YearHidden(startTime, endTime, timeZone)
         .then(function(data) {
             if(data) {
                 res.json(data);

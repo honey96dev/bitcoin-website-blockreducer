@@ -40,7 +40,7 @@
                 templateUrl: './components/sections/charts/views/price.html',
                 controller: 'PriceChartController',
                 controllerAs: 'vm',
-                data: { activeTab: 'priceChart' }
+                // data: { activeTab: 'priceChart' }
             })
 
             .state('volume-chart', {
@@ -48,7 +48,15 @@
                 templateUrl: './components/sections/charts/views/volume.html',
                 controller: 'VolumeChartController',
                 controllerAs: 'vm',
-                data: { activeTab: 'volumeChart' }
+                // data: { activeTab: 'volumeChart' }
+            })
+
+            .state('vwap-chart', {
+                url: '/vwap-chart',
+                templateUrl: './components/sections/charts/views/vwap.html',
+                controller: 'VwapChartController',
+                controllerAs: 'vm',
+                // data: { activeTab: 'volumeChart' }
             })
 
             .state('current-trade-chart', {
@@ -56,7 +64,7 @@
                 templateUrl: './components/sections/charts/views/trade.html',
                 controller: 'CurrentTradeController',
                 controllerAs: 'vm',
-                data: { activeTab: 'tradeChart' }
+                // data: { activeTab: 'tradeChart' }
             })
 
             .state('fft-chart', {
@@ -64,7 +72,7 @@
                 templateUrl: './components/sections/fft/views/fft.html',
                 controller: 'FFTChartController',
                 controllerAs: 'vm',
-                data: { activeTab: 'fftChart' }
+                // data: { activeTab: 'fftChart' }
             })
 
             .state('hidden-day-chart', {
@@ -190,7 +198,7 @@
     function run($http, $rootScope, $window, UserService) {
         // add JWT token as default auth header
         $http.defaults.headers.common['Authorization'] = 'Bearer ' + $window.jwtToken;
-        
+
         // update active tab on state change
         $rootScope.$on('$stateChangeSuccess', function (event, toState, toParams, fromState, fromParams) {
             $rootScope.activeTab = toState.data.activeTab;
@@ -201,8 +209,8 @@
             $rootScope.userId  = user.id;
             $rootScope.username  = user.username;
             $rootScope.auth = user.auth;
-            var role = user.auth; 
-            if(role=='admin'){ 
+            var role = user.auth;
+            if(role=='admin'){
                 // $('a#admin_li').remove();
                 var admin_li = "<li class='sidebar'><a ui-sref='admin' href='#!/admin' id='admin_li' onmouseover=''><i class='fa fa-tachometer-alt'></i><span>Admin Panel</span></a></li>";
                 $("li#block_chart").before(admin_li);

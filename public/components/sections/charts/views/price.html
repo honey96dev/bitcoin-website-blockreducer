@@ -3,25 +3,30 @@
         <div class="card shadow-lg col-md-12">
             <div class="card bg-dark">
                 <div class="card-body text-white row">
-                    <div class="col-md-7">
+                    <div class="col-md-4">
                         <h4><strong> Price - Timestamp </strong></h4>
                     </div>
-                    <div class="col-md-5">
+                    <div class="col-md-8">
                         <form ng-submit="CustomizeChart()" class="row " style="margin-bottom:0px!important;">
-                            <div class="start-time col-sm-4">
+                            <div class="start-time col-sm-3">
                                 <div class="input-group mb-12">
                                     <input ng-model="startTime" class="text-white form-control" datetime-picker date-format="yyyy-MM-dd HH:mm:ss">
                                 </div>
                             </div>
-                            <div class="end-time col-sm-4">
+                            <div class="end-time col-sm-3">
                                 <div class="input-group mb-12">
                                     <input ng-model="endTime" class=" text-white form-control" datetime-picker date-format="yyyy-MM-dd HH:mm:ss">
                                 </div>
                             </div>
-                            <div class="button-group col-sm-4">
+                            <div class="end-time col-sm-2">
+                                <div class="input-group mb-12">
+                                    <input ng-model="timeZone" class="text-white form-control" type="number">
+                                </div>
+                            </div>
+                            <div class="button-group col-sm-3">
                                 <div class="input-group mb-12">
                                     <button type="submit" class="btn btn-primary">
-                                        <h6><strong> Customize Chart </strong></h6>  
+                                        <h6><strong> Customize Chart </strong></h6>
                                     </button>
                                 </div>
                             </div>

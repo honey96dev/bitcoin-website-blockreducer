@@ -19,6 +19,7 @@
         $scope.binSize = '5m';
         $scope.startTime = '';
         $scope.endTime = '';
+        $scope.timeZone = 0;
 
         $scope.open = {
             x: [],
@@ -37,45 +38,15 @@
             //     dash: 'dash',
             // },
         };
-        $scope.num_3 = {
+        $scope.volumeSum = {
             x: [],
             y: [],
-            name: 'Num3*VWAP',
-            yaxis: 'y1',
+            name: 'VolumeSum',
+            yaxis: 'y2',
             type: 'scatter',
-            line: {
-                dash: 'dash',
-            },
-        };
-        $scope.num_6 = {
-            x: [],
-            y: [],
-            name: 'Num6*VWAP',
-            yaxis: 'y1',
-            type: 'scatter',
-            line: {
-                dash: 'dash',
-            },
-        };
-        $scope.num_9 = {
-            x: [],
-            y: [],
-            name: 'Num9*VWAP',
-            yaxis: 'y1',
-            type: 'scatter',
-            line: {
-                dash: 'dash',
-            },
-        };
-        $scope.num_100 = {
-            x: [],
-            y: [],
-            name: 'Num100*VWAP',
-            yaxis: 'y1',
-            type: 'scatter',
-            line: {
-                dash: 'dash',
-            },
+            // line: {
+            //     dash: 'dash',
+            // },
         };
 
         $scope.open2 = {
@@ -113,20 +84,15 @@
                         interval: $scope.binSize,
                         startTime: $scope.startTime,
                         endTime: $scope.endTime,
+                        timeZone: $scope.timeZone,
                     }
                 }).then(function (res) {
                     $scope.open.x = [];
                     $scope.open.y = [];
                     $scope.volume.x = [];
                     $scope.volume.y = [];
-                    $scope.num_3.x = [];
-                    $scope.num_3.y = [];
-                    $scope.num_6.x = [];
-                    $scope.num_6.y = [];
-                    $scope.num_9.x = [];
-                    $scope.num_9.y = [];
-                    $scope.num_100.x = [];
-                    $scope.num_100.y = [];
+                    $scope.volumeSum.x = [];
+                    $scope.volumeSum.y = [];
 
                     var tmpData = res.data;
 
@@ -135,17 +101,11 @@
                         $scope.open.y.push(obj.open);
                         $scope.volume.x.push(obj.timestamp);
                         $scope.volume.y.push(obj.volume);
-                        $scope.num_3.x.push(obj.timestamp);
-                        $scope.num_3.y.push(obj.num_3);
-                        $scope.num_6.x.push(obj.timestamp);
-                        $scope.num_6.y.push(obj.num_6);
-                        $scope.num_9.x.push(obj.timestamp);
-                        $scope.num_9.y.push(obj.num_9);
-                        $scope.num_100.x.push(obj.timestamp);
-                        $scope.num_100.y.push(obj.num_100);
+                        $scope.volumeSum.x.push(obj.timestamp);
+                        $scope.volumeSum.y.push(obj.volumeSum);
                     }
 
-                    var data = [$scope.open, $scope.volume, $scope.num_3, $scope.num_6, $scope.num_9, $scope.num_100];
+                    var data = [$scope.open, $scope.volume, $scope.volumeSum];
 
                     var layout = {
                         dragmode: 'zoom',
@@ -162,7 +122,7 @@
                             type: 'linear'
                         },
                         yaxis2: {
-                            title: 'Volume',
+                            title: 'Volume/VolumeSum',
                             titlefont: {color: 'rgb(148, 103, 189)'},
                             tickfont: {color: 'rgb(148, 103, 189)'},
                             overlaying: 'y',
@@ -192,6 +152,7 @@
                             interval: $scope.binSize,
                             startTime: $scope.startTime,
                             endTime: $scope.endTime,
+                            timeZone: $scope.timeZone,
                         }
                     }).then(function (res) {
                         $scope.open2.x = [];

@@ -21,8 +21,8 @@ function GetLast1MonthPrice() {
     GetMaxIsoDate(function(callback) {
         var endTime = callback.max;
         var startTime = new Date(new Date(endTime).getTime() - 2592000000).toISOString();
-        
-        GetCustomizeData(startTime, endTime, function(callback) {
+
+        GetCustomizeData(startTime, endTime, 0, function(callback) {
             deferred.resolve(_.add(callback));
         });
     });
@@ -30,13 +30,13 @@ function GetLast1MonthPrice() {
     return deferred.promise;
 }
 
-function GetCustomizePrice(startTime, endTime) {
+function GetCustomizePrice(startTime, endTime, timeZone) {
     var deferred = Q.defer();
 
-    GetCustomizeData(startTime, endTime, function(callback) {
+    GetCustomizeData(startTime, endTime, timeZone, function(callback) {
         deferred.resolve(_.add(callback));
     });
-    
+
     return deferred.promise;
 }
 
@@ -45,7 +45,7 @@ function GetMaxIsoDate(callback) {
     var selectSql = 'SELECT MAX(`timestamp`) AS max FROM `bitmex_data_5m`';
 
     dbConn.query(selectSql, function(error, results, fields) {
-        if (error) {            
+        if (error) {
             deferred.reject("Error!");
         }
 
@@ -53,7 +53,7 @@ function GetMaxIsoDate(callback) {
     });
 }
 
-function GetCustomizeData (startTime, endTime, callback) {
+function GetCustomizeData (startTime, endTime, timeZone, callback) {
     var deferred = Q.defer();
     //
     // let sql = sprintf("SELECT COUNT(`id`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", binSize);
@@ -72,6 +72,10 @@ function GetCustomizeData (startTime, endTime, callback) {
     //         callback(results);
     //     });
     // });
+    // startTime = new Date(startTime).toISOString();
+    // startTime =
+    startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
     let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }

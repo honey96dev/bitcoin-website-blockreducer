@@ -6,6 +6,7 @@
         .controller('HiddenOrderDayController', Controller);
 
     function Controller($scope, $http, $window) {
+        $scope.timeZone = 0;
         $scope.trace1 = {
             x: [],
             y: [],
@@ -52,6 +53,7 @@
                     params: {
                         startTime: $scope.startTime,
                         endTime: $scope.endTime,
+                        timeZone: $scope.timeZone,
                     }
                 }
             }).then((res) => {

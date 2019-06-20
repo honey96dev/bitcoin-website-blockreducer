@@ -6,10 +6,12 @@
         .controller('PriceChartController', Controller);
 
     function Controller($scope, $http, $window) {
+        $scope.timeZone = 0;
+
         $scope.graphData = {
             x: [], y:[], type: 'scatter'
         };
-    
+
         initController();
 
         function initController() {
@@ -25,9 +27,9 @@
                     $scope.graphData.x.push(obj.isoDate);
                     $scope.graphData.y.push(obj.open);
                 }
-    
+
                 $scope.graphPlots = [$scope.graphData];
-    
+
                 $scope.graphData = {
                     x: [], y:[], type: 'scatter'
                 };
@@ -37,7 +39,7 @@
         $scope.CustomizeChart = function() {
             var startTime = new Date($scope.startTime).toISOString();
             var endTime = new Date($scope.endTime).toISOString();
-    
+
             if ($scope.startTime > $scope.endTime) {
                 $window.alert('Please Check your "Start Time"!');
             } else {
@@ -46,7 +48,8 @@
                     url: "/chart/price/custom",
                     data: {
                         startTime: startTime,
-                        endTime: endTime
+                        endTime: endTime,
+                        timeZone: $scope.timeZone,
                     }
                 }).then(function(res) {
                     var tmpData = res.data;
@@ -54,9 +57,9 @@
                         $scope.graphData.x.push(obj.isoDate);
                         $scope.graphData.y.push(obj.open);
                     }
-    
+
                     $scope.graphPlots = [$scope.graphData];
-    
+
                     $scope.graphData = {
                         x: [], y:[], type: 'scatter'
                     };

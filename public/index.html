@@ -12,19 +12,19 @@
         <link href="./assets/css/bootstrap-material-design.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css"/>
         <!-- End import core css files -->
-        
+
         <link href="./components/_base/_style/custom.style.css" rel="stylesheet">
         <link href="./assets/css/streaming-list.css" rel="stylesheet">
         <!-- Import favicon file -->
         <link rel="icon" type="image/x-icon" href="./favicon.ico">
     </head>
-    <body>  
+    <body>
         <div class="page-wrapper chiller-theme toggled">
             <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
                 <i class="fa fa-bars"></i>
             </a>
             <nav id="sidebar" class="sidebar-wrapper">
-                
+
                 <div class="sidebar-content">
                     <div class="sidebar-brand">
                         <a href="#">
@@ -69,7 +69,7 @@
                                 <span>General</span>
                             </li>
                             <li class="sidebar-dropdown active" id="block_chart">
-                                
+
                                 <a href="#" >
                                         <i class="fa fa-line-chart"></i>
                                         <span>Block Charts</span>
@@ -89,6 +89,11 @@
                                             </a>
                                         </li>
                                         <li>
+                                            <a ui-sref="vwap-chart" onmouseover="" />
+                                                VWAP Chart
+                                            </a>
+                                        </li>
+                                        <li>
                                             <a ui-sref="current-trade-chart" onmouseover=""/>
                                                 Current Trade Chart
                                             </a>
@@ -96,7 +101,7 @@
                                     </ul>
                                 </div>
                             </li>
-                            
+
                             <li class="header-menu">
                                 <span>User management</span>
                             </li>
@@ -237,13 +242,13 @@
         <script src='./assets/js/angularjs-datetime-picker.min.js'></script>
         <script src='./assets/js/ui-bootstrap.js'></script>
         <script src='./assets/js/ui-bootstrap-tpls.js'></script>
-        
+
         <!-- Begin import Graph javascript lib files -->
         <script src='./assets/js/d3.min.js'></script>
         <script src='./assets/js/plotly-basic.js'></script>
         <script src='./assets/js/ploty-lastest.js'></script>
         <!-- End import Graph javascript lib files -->
-        
+
         <script src='./assets/js/jquery.min.js'></script>
         <script src='./assets/js/popper.min.js'></script>
         <script src='./assets/js/bootstrap-material-design.js'></script>
@@ -253,7 +258,7 @@
         <script src='./components/_base/_style/custom.style.js'></script>
         <!-- End import core javascript files -->
 
-        
+
 
         <!-- Begin import custom javascript files -->
         <script src='./components/app.js'></script>
@@ -265,6 +270,7 @@
         <script src='./components/sections/account/controllers/change-password.js'></script>
         <script src='./components/sections/charts/controllers/price.js'></script>
         <script src='./components/sections/charts/controllers/volume.js'></script>
+        <script src='./components/sections/charts/controllers/vwap.js'></script>
         <script src='./components/sections/charts/controllers/trade.js'></script>
         <script src='./components/sections/fft/controllers/fft.js'></script>
         <script src='./components/sections/hidden-order/controllers/hidden-day.js'></script>

@@ -5,7 +5,7 @@ router.post('/init', GetLast1MonthFFT);
 // router.post('/fft/custom', GetCustomizeFFT);
 router.post('/estimate', GetEstimateFFT);
 router.post('/customize', GetDataByCandle);
-router.get('/:candle', GetDataByCandle);
+router.post('/:candle', GetDataByCandle);
 
 module.exports = router;
 
@@ -35,8 +35,8 @@ function GetDataByCandle(req, res) {
     }
 
     let endTime = new Date().toISOString();
-    if (req.body.inputData && req.body.inputData.endTime) {
-        endTime = (new Date(req.body.inputData.endTime)).toISOString();
+    if (req.body.data && req.body.data.endTime) {
+        endTime = (new Date(req.body.data.endTime)).toISOString();
     }
     endTime = new Date(endTime);
     endTime.setMinutes(Math.floor(endTime.getMinutes() / 5) * 5);
@@ -45,22 +45,15 @@ function GetDataByCandle(req, res) {
     let startTime = new Date();
     startTime.setFullYear(startTime.getFullYear() - 4);
     startTime = startTime.toISOString();
-    if (req.body.inputData && req.body.inputData.startTime) {
-        startTime = (new Date(req.body.inputData.startTime)).toISOString();
+    if (req.body.data && req.body.data.startTime) {
+        startTime = (new Date(req.body.data.startTime)).toISOString();
     }
 
-    // fftService.GetDataByCandle(candle, startTime, endTime)
-    //     .then(function(data) {
-    //         if(data) {
-    //             res.json(data);
-    //         } else {
-    //             res.sendStatus(404);
-    //         }
-    //     })
-    //     .catch(function(error) {
-    //         res.status(400).send(error);
-    //     });
+    console.log(req.body);
 
+    let timeZone = req.body.data.timeZone;
+    startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
     fftService.GetCustomizeFFT(candle, startTime, endTime)
         .then(function(data) {
             if(data) {
@@ -96,6 +89,9 @@ function GetEstimateFFT(req, res) {
     if (req.body.data && req.body.data.startTime) {
         startTime = (new Date(req.body.data.startTime)).toISOString();
     }
+    let timeZone = req.body.data.timeZone;
+    startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
     let estimates = req.body.estimates;
     // console.log('GetEstimateFFT', req.body, startTime, endTime, estimates);
     fftService.GetEstimateFFT(candle, startTime, endTime, estimates, req.session.userId)

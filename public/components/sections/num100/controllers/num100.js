@@ -10,6 +10,7 @@
         $scope.binSize = '5m';
         $scope.startTime = '';
         $scope.endTime = '';
+        $scope.timeZone = 0;
 
         $scope.open = {
             x: [],
@@ -105,7 +106,7 @@
             var binSize = $scope.binSize;
             console.log('CustomizeChart', binSize, new Date());
             // var endTime = new Date($scope.endTime).toISOString();
-    
+
             if ($scope.startTime > $scope.endTime) {
                 $window.alert('Please Check your "Start Time"!');
             } else {
@@ -115,6 +116,7 @@
                     params: {
                         startTime: $scope.startTime,
                         endTime: $scope.endTime,
+                        timeZone: $scope.timeZone,
                     }
                 }).then(function(res) {
                     $scope.open.x = [];

@@ -6,6 +6,10 @@
         .controller('FFTChart2Controller', Controller);
 
     function Controller($scope, $http, $window, $location, UserService) {
+        $scope.data = {
+            timeZone: 0,
+        };
+
 
         $scope.trace1 = {
             x: [],
@@ -318,16 +322,16 @@
             }
         };
 
-        $scope.CustomizeChart = function(inputData) {
+        $scope.CustomizeChart = function(data) {
             let candle = '5m';
-            if (!!inputData.candle) {
-                candle = inputData.candle;
+            if (!!data.candle) {
+                candle = data.candle;
             }
             $http({
-                method: 'GET',
+                method: 'POST',
                 url: '/volatility/' + candle,
                 data: {
-                    inputData,
+                    data,
                 }
             }).then(function(res) {
                 var tmpData = res.data;

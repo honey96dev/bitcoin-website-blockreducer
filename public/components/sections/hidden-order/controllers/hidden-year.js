@@ -6,6 +6,7 @@
         .controller('HiddenOrderYearController', Controller);
 
     function Controller($scope, $http, $window) {
+        $scope.timeZone = 0;
         $scope.trace1 = {
             x: [],
             y: [],
@@ -44,14 +45,16 @@
             }
         };
 
-        initController();
-
-        function initController() {
+        $scope.CustomizeChart = function initController() {
             $http({
                 method: "POST",
                 url: "/chart/hidden/year",
                 data: {
-                    str: "init"
+                    params: {
+                        startTime: $scope.startTime,
+                        endTime: $scope.endTime,
+                        timeZone: $scope.timeZone,
+                    }
                 }
             }).then((res) => {
                 $scope.trace1.x = [];
@@ -124,12 +127,18 @@
                         overlaying: 'y',
                         side: 'right'
                     }
-                }
+                };
 
-                Plotly.plot('hidden-timestamp-chart', data3, layout3, {responsive: true});
+                Plotly.newPlot('hidden-timestamp-chart', data3, layout3, {responsive: true});
                 // console.log(data2);
             });
+        };
+
+        function initController() {
+            $scope.CustomizeChart();
         }
+
+        initController();
     }
 
 })();

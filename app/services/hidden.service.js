@@ -13,7 +13,7 @@ service.GetLast1YearHidden = GetLast1YearHidden;
 
 module.exports = service;
 
-function GetLast1DayHidden(startTime, endTime) {
+function GetLast1DayHidden(startTime, endTime, timeZone) {
     let deferred = Q.defer();
     let tmpDataArray = [];
     GetMaxIsoDate('1m', function(callback) {
@@ -23,6 +23,8 @@ function GetLast1DayHidden(startTime, endTime) {
         if (typeof startTime === 'undefined') {
             startTime = new Date(new Date(endTime).getTime() - 86400000).toISOString();
         }
+        startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
         GetCutomizePrice (startTime, endTime, '1m', function(callback) {
             // callback.splice(0, 0, {timestamp: startTime, open: null});
             // callback.push({timestamp: endTime, open: null});
@@ -47,23 +49,19 @@ function GetLast1DayHidden(startTime, endTime) {
     return deferred.promise;
 }
 
-function GetLast1YearHidden() {
+function GetLast1YearHidden(startTime, endTime, timeZone) {
     var deferred = Q.defer();
     var tmpDataArray = [];
     GetMaxIsoDate('1h', function(callback) {
-        var endTime = callback.max;
-        let startTime;
-        if (endTime != null) {
-            startTime = new Date(endTime);
-            startTime.setFullYear(startTime.getFullYear() - 1);
-            startTime = startTime.toISOString();
-            // startTime = new Date(new Date(endTime).getTime() - 30 * 86400000).toISOString();
-        } else {
-            startTime = new Date();
-            startTime.setFullYear(startTime.getFullYear() - 1);
-            startTime = startTime.toISOString();
-            // startTime = new Date(new Date().getTime() - 30 * 86400000).toISOString();
+        if (typeof endTime === 'undefined') {
+            endTime = callback.max;
         }
+        if (typeof startTime === 'undefined') {
+            startTime = new Date(new Date(endTime).getTime() - 31556952000).toISOString();
+        }
+        startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+
         GetCutomizePrice (startTime, endTime, '1h', function(callback) {
             // callback.splice(0, 0, {timestamp: startTime, open: null});
             // callback.push({timestamp: endTime, open: null});
