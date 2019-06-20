@@ -242,7 +242,7 @@ function GetVolumeChart2(req, res) {
                 return;
             }
             let step = parseInt(results[0]['cnt']) / config.volumeChartEntryNum;
-            sql = sprintf("SELECT `timestamp`, SUM(`openInterest`) `openInterest`, SUM(`openValue`) `openValue`, SUM(`open`) `open` FROM (SELECT tmp.*, FLOOR((SELECT @row_num:=@row_num+1) / %f) `row_num` FROM (SELECT I.timestamp, I.openInterest, I.openValue, IFNULL(B.open, 0) `open` FROM `interested_n_value_%s` I LEFT JOIN `bitmex_data_%s_view` B ON B.timestamp = I.timestamp WHERE I.timestamp BETWEEN '%s' AND '%s') `tmp`, (SELECT @row_num:=0) `rnum`) `final` GROUP BY `row_num` ORDER BY `timestamp` ASC;", step, interval, interval, startTime, endTime);
+            sql = sprintf("SELECT `timestamp`, AVG(`openInterest`) `openInterest`, AVG(`openValue`) `openValue`, AVG(`open`) `open` FROM (SELECT tmp.*, FLOOR((SELECT @row_num:=@row_num+1) / %f) `row_num` FROM (SELECT I.timestamp, I.openInterest, I.openValue, IFNULL(B.open, 0) `open` FROM `interested_n_value_%s` I LEFT JOIN `bitmex_data_%s_view` B ON B.timestamp = I.timestamp WHERE I.timestamp BETWEEN '%s' AND '%s') `tmp`, (SELECT @row_num:=0) `rnum`) `final` GROUP BY `row_num` ORDER BY `timestamp` ASC;", step, interval, interval, startTime, endTime);
             console.log(sql);
             dbConn.query(sql, null, (error, results, fields) => {
                 if (error) {
