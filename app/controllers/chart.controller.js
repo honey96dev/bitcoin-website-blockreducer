@@ -74,8 +74,8 @@ function GetVolumeChart(req, res) {
     }
     let sql;
     if (startTime && startTime.length > 0) {
-        startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
-        endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        // startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        // endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
         sql = sprintf("SELECT COUNT(`timestamp`) `cnt` FROM (SELECT V.timestamp FROM `volume_%s` V LEFT JOIN `vwap_%s` W ON W.timestamp = V.timestamp LEFT JOIN `id0_%s` I ON I.timestamp = V.timestamp WHERE V.timestamp BETWEEN '%s' AND '%s' ORDER BY `timestamp`) `tmp`", interval, interval, interval, startTime, endTime);
         dbConn.query(sql, undefined, (error, results, fields) => {
             if (error) {
