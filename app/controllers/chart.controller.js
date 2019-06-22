@@ -86,8 +86,12 @@ function GetVolumeChart(req, res) {
                 });
                 return;
             }
+
+            const timestampOffset = sprintf("%d:00:00", timeZone);
+            const timestampFormat = "%Y-%m-%dT%H:%i:%s.000Z";
+
             let step = parseInt(results[0]['cnt']) / config.volumeChartEntryNum;
-            sql = sprintf("SELECT `timestamp`, SUM(`volume`) `volume`, AVG(`open`) `open`, AVG(`vwap_seed`) `vwap_seed`, AVG(`num_3`) `num_3`, AVG(`num_6`) `num_6`, AVG(`num_9`) `num_9`, AVG(`num_100`) `num_100` FROM (SELECT (SELECT FLOOR((@row_num:=@row_num+1) / %f)) `row_num`, tmp.* FROM (SELECT V.timestamp, IFNULL(V.volume, 0) `volume`, IFNULL(I.open, 0) `open`, IFNULL(W.vwap_seed, 1) `vwap_seed`, IFNULL(I.num_3, 0) `num_3`, IFNULL(I.num_6, 0) `num_6`, IFNULL(I.num_9, 0) `num_9`, IFNULL(I.num_100, 0) `num_100` FROM `volume_%s` V LEFT JOIN `vwap_%s` W ON W.timestamp = V.timestamp LEFT JOIN `id0_%s` I ON I.timestamp = V.timestamp WHERE V.timestamp BETWEEN '%s' AND '%s' ORDER BY `timestamp`) `tmp`, (SELECT @row_num := 0) `rnum`) `final` GROUP BY `row_num` ORDER BY `timestamp`;", step, interval, interval, interval, startTime, endTime);
+            sql = sprintf("SELECT `timestamp`, SUM(`volume`) `volume`, AVG(`open`) `open`, AVG(`vwap_seed`) `vwap_seed`, AVG(`num_3`) `num_3`, AVG(`num_6`) `num_6`, AVG(`num_9`) `num_9`, AVG(`num_100`) `num_100` FROM (SELECT (SELECT FLOOR((@row_num:=@row_num+1) / %f)) `row_num`, tmp.* FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(V.timestamp, '%s'), '%s'), '%s') `timestamp`, IFNULL(V.volume, 0) `volume`, IFNULL(I.open, 0) `open`, IFNULL(W.vwap_seed, 1) `vwap_seed`, IFNULL(I.num_3, 0) `num_3`, IFNULL(I.num_6, 0) `num_6`, IFNULL(I.num_9, 0) `num_9`, IFNULL(I.num_100, 0) `num_100` FROM `volume_%s` V LEFT JOIN `vwap_%s` W ON W.timestamp = V.timestamp LEFT JOIN `id0_%s` I ON I.timestamp = V.timestamp WHERE V.timestamp BETWEEN '%s' AND '%s' ORDER BY `timestamp`) `tmp`, (SELECT @row_num := 0) `rnum`) `final` GROUP BY `row_num` ORDER BY `timestamp`;", step, timestampFormat, timestampOffset, timestampFormat, interval, interval, interval, startTime, endTime);
             console.log(sql);
             dbConn.query(sql, null, (error, results, fields) => {
                 if (error) {
@@ -229,8 +233,8 @@ function GetVolumeChart2(req, res) {
     }
     let sql;
     if (startTime && startTime.length > 0) {
-        startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
-        endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        // startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        // endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
         sql = sprintf("SELECT COUNT(`timestamp`) `cnt` FROM (SELECT I.timestamp, I.openInterest, I.openValue, IFNULL(B.open, 0) `open` FROM `interested_n_value_%s` I LEFT JOIN `bitmex_data_%s_view` B ON B.timestamp = I.timestamp WHERE I.timestamp BETWEEN '%s' AND '%s') `tmp`", interval, interval, startTime, endTime);
         dbConn.query(sql, undefined, (error, results, fields) => {
             if (error) {
@@ -241,8 +245,12 @@ function GetVolumeChart2(req, res) {
                 });
                 return;
             }
+
+            const timestampOffset = sprintf("%d:00:00", timeZone);
+            const timestampFormat = "%Y-%m-%dT%H:%i:%s.000Z";
+
             let step = parseInt(results[0]['cnt']) / config.volumeChartEntryNum;
-            sql = sprintf("SELECT `timestamp`, AVG(`openInterest`) `openInterest`, AVG(`openValue`) `openValue`, AVG(`open`) `open` FROM (SELECT tmp.*, FLOOR((SELECT @row_num:=@row_num+1) / %f) `row_num` FROM (SELECT I.timestamp, I.openInterest, I.openValue, IFNULL(B.open, 0) `open` FROM `interested_n_value_%s` I LEFT JOIN `bitmex_data_%s_view` B ON B.timestamp = I.timestamp WHERE I.timestamp BETWEEN '%s' AND '%s') `tmp`, (SELECT @row_num:=0) `rnum`) `final` GROUP BY `row_num` ORDER BY `timestamp` ASC;", step, interval, interval, startTime, endTime);
+            sql = sprintf("SELECT `timestamp`, AVG(`openInterest`) `openInterest`, AVG(`openValue`) `openValue`, AVG(`open`) `open` FROM (SELECT tmp.*, FLOOR((SELECT @row_num:=@row_num+1) / %f) `row_num` FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(I.timestamp, '%s'), '%s'), '%s') `timestamp`, I.openInterest, I.openValue, IFNULL(B.open, 0) `open` FROM `interested_n_value_%s` I LEFT JOIN `bitmex_data_%s_view` B ON B.timestamp = I.timestamp WHERE I.timestamp BETWEEN '%s' AND '%s') `tmp`, (SELECT @row_num:=0) `rnum`) `final` GROUP BY `row_num` ORDER BY `timestamp` ASC;", step, timestampFormat, timestampOffset, timestampFormat, interval, interval, startTime, endTime);
             console.log(sql);
             dbConn.query(sql, null, (error, results, fields) => {
                 if (error) {

@@ -52,9 +52,9 @@ function GetDataByCandle(req, res) {
     console.log(req.body);
 
     let timeZone = req.body.data.timeZone;
-    startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
-    endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
-    fftService.GetCustomizeFFT(candle, startTime, endTime)
+    // startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    // endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    fftService.GetCustomizeFFT(candle, startTime, endTime, timeZone)
         .then(function(data) {
             if(data) {
                 res.json(data);
@@ -90,11 +90,11 @@ function GetEstimateFFT(req, res) {
         startTime = (new Date(req.body.data.startTime)).toISOString();
     }
     let timeZone = req.body.data.timeZone;
-    startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
-    endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    // startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    // endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
     let estimates = req.body.estimates;
     // console.log('GetEstimateFFT', req.body, startTime, endTime, estimates);
-    fftService.GetEstimateFFT(candle, startTime, endTime, estimates, req.session.userId)
+    fftService.GetEstimateFFT(candle, startTime, endTime, timeZone, estimates, req.session.userId)
         .then(function(data) {
             if(data) {
                 res.json(data);

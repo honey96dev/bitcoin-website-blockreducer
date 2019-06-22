@@ -219,9 +219,11 @@ router.get('/id0_collection/:interval', (req, res) => {
     let sql;
     if (startTime && startTime.length > 0) {
         let timeZone = req.query.timeZone;
-        startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
-        endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
-        sql = sprintf("SELECT * FROM (SELECT `timestamp`, `open`, `num_3`, `num_3i`, `num_6`, `num_6i`, `num_9`, `num_9i`, `num_100`, `num_100i` FROM `id0_%s` WHERE `timestamp` BETWEEN '%s' AND '%s' ORDER BY `timestamp` DESC LIMIT 2000) `sub` ORDER BY `timestamp` ASC;", interval, startTime, endTime);
+        const timestampOffset = sprintf("%d:00:00", timeZone);
+        const timestampFormat = "%Y-%m-%dT%H:%i:%s.000Z";
+        // startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        // endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+        sql = sprintf("SELECT * FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `num_3`, `num_3i`, `num_6`, `num_6i`, `num_9`, `num_9i`, `num_100`, `num_100i` FROM `id0_%s` WHERE `timestamp` BETWEEN '%s' AND '%s' ORDER BY `timestamp` DESC LIMIT 2000) `sub` ORDER BY `timestamp` ASC;", timestampFormat, timestampOffset, timestampFormat, interval, startTime, endTime);
     } else {
         sql = sprintf("SELECT * FROM (SELECT `timestamp`, `open`, `num_3`, `num_3i`, `num_6`, `num_6i`, `num_9`, `num_9i`, `num_100`, `num_100i` FROM `id0_%s` ORDER BY `timestamp` DESC LIMIT 2000) `sub` ORDER BY `timestamp` ASC;", interval);
     }

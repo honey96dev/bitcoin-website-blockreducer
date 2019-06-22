@@ -109,7 +109,7 @@ service.GetLast1MonthFFT = function (req, res) {
 }
 
 
-service.GetCustomizeFFT = function (candle, startTime, endTime) {
+service.GetCustomizeFFT = function (candle, startTime, endTime, timeZone) {
     var deferred = Q.defer();
 
     if (candle == null || candle.length === 0) {
@@ -121,8 +121,11 @@ service.GetCustomizeFFT = function (candle, startTime, endTime) {
         const cnt = results[0].count;
         const step = cnt / config.hiddenChartEntryNum;
 
+        const timestampOffset = sprintf("%d:00:00", timeZone);
+        const timestampFormat = "%Y-%m-%dT%H:%i:%s.000Z";
+
         // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
-        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`high`) `high`, AVG(`low`) `low`, AVG(`close`) `close`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `high`, `low`, `close`, `lowPass`, `highPass` FROM (SELECT `timestamp`, `open`, `high`, `low`, `close`, `lowPass`, `highPass` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, candle, startTime, endTime);
+        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`high`) `high`, AVG(`low`) `low`, AVG(`close`) `close`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `high`, `low`, `close`, `lowPass`, `highPass` FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `high`, `low`, `close`, `lowPass`, `highPass` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, timestampFormat, timestampOffset, timestampFormat, candle, startTime, endTime);
         console.log('GetCutomizePrice', sql);
         dbConn.query(sql, null, function(error, results, fields) {
             if (error) { console.log(error); }
@@ -315,7 +318,7 @@ function GetCandleTempData (callback) {
     });
 }
 
-service.GetEstimateFFT = function (candle, startTime, endTime, estimates, userId) {
+service.GetEstimateFFT = function (candle, startTime, endTime, timeZone, estimates, userId) {
     var deferred = Q.defer();
 
     if (candle == null || candle.length === 0) {
@@ -483,9 +486,13 @@ service.GetEstimateFFT = function (candle, startTime, endTime, estimates, userId
                             deferred.resolve(_.add([]));
                             return;
                         }
+
+                        const timestampOffset = sprintf("%d:00:00", timeZone);
+                        const timestampFormat = "%Y-%m-%dT%H:%i:%s.000Z";
+
                         const dataCount = results[0].count;
                         const step = dataCount / config.hiddenChartEntryNum;
-                        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass`, FLOOR((@row_number:=@row_number + 1)/%f) AS num FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `bitmex_data_%s_view` WHERE `timestamp` >= '%s' AND `timestamp` < '%s' UNION SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `estimates` WHERE `userId` = '%s') `tmp`, (SELECT @row_number:=0) `row_num` GROUP BY `num`;", step, candle, startTime, endTime, userId);
+                        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass`, FLOOR((@row_number:=@row_number + 1)/%f) AS num FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `lowPass`, `highPass` FROM `bitmex_data_%s_view` WHERE `timestamp` >= '%s' AND `timestamp` < '%s' UNION SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `lowPass`, `highPass` FROM `estimates` WHERE `userId` = '%s') `tmp`, (SELECT @row_number:=0) `row_num` GROUP BY `num`;", step, timestampFormat, timestampOffset, timestampFormat, candle, startTime, endTime, timestampFormat, timestampOffset, timestampFormat, userId);
                         console.log(sql);
                         dbConn.query(sql, null, function(error, results, fields) {
                             if (error) { console.log(error); }
