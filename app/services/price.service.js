@@ -74,18 +74,21 @@ function GetCustomizeData (startTime, endTime, timeZone, callback) {
     // });
     // startTime = new Date(startTime).toISOString();
     // startTime =
-    startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
-    endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    // startTime = new Date(new Date(startTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
+    // endTime = new Date(new Date(endTime).getTime() + Math.floor(3600000 * parseFloat(timeZone))).toISOString();
     let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
         const cnt = results[0].count;
         const step = cnt / config.hiddenChartEntryNum;
 
+        const timestampOffset = sprintf("%d:00:00", timeZone);
+        const timestampFormat = "%Y-%m-%dT%H:%i:%s.000Z";
+
         // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
         sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open` " +
-            "FROM (SELECT `timestamp`, `open` FROM bitmex_data_5m_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, " +
-            "(SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
+            "FROM (SELECT DATE_FORMAT(ADDTIME(`timestamp`, '%s'), '%s') `timestamp`, `open` FROM bitmex_data_5m_view WHERE `timestamp` BETWEEN '%s' AND '%s' ORDER BY `timestamp`) `bd`, " +
+            "(SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, timestampOffset, timestampFormat, startTime, endTime);
         console.log('GetCutomizePrice', sql);
         dbConn.query(sql, null, function(error, results, fields) {
             if (error) {
