@@ -87,8 +87,8 @@ function GetCustomizeData (startTime, endTime, timeZone, callback) {
 
         // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
         sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open` " +
-            "FROM (SELECT DATE_FORMAT(ADDTIME(`timestamp`, '%s'), '%s') `timestamp`, `open` FROM bitmex_data_5m_view WHERE `timestamp` BETWEEN '%s' AND '%s' ORDER BY `timestamp`) `bd`, " +
-            "(SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, timestampOffset, timestampFormat, startTime, endTime);
+            "FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open` FROM bitmex_data_5m_view WHERE `timestamp` BETWEEN '%s' AND '%s' ORDER BY `timestamp`) `bd`, " +
+            "(SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, timestampFormat, timestampOffset, timestampFormat, startTime, endTime);
         console.log('GetCutomizePrice', sql);
         dbConn.query(sql, null, function(error, results, fields) {
             if (error) {
