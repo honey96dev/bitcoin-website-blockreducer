@@ -122,7 +122,7 @@
                         side: 'right'
                     }
                 };
-                Plotly.newPlot('plotly-div', data1, layout1);
+                Plotly.newPlot('myFFTDiv1', data1, layout1);
 
 
                 var data2 = [$scope.trace1, $scope.trace3];
@@ -157,7 +157,7 @@
                 };
 
                 console.log(data2);
-                Plotly.newPlot('myFFTDiv', data2, layout2);
+                Plotly.newPlot('myFFTDiv2', data2, layout2);
 
                 // var data2 = [$scope.trace2];
 
@@ -393,7 +393,7 @@
                     }
                 };
 
-                Plotly.newPlot('plotly-div', data1, layout1, {responsive: true});
+                Plotly.newPlot('myFFTDiv1', data1, layout1, {responsive: true});
 
 
                 var data2 = [$scope.trace1, $scope.trace3];
@@ -427,7 +427,7 @@
                     }
                 };
 
-                Plotly.newPlot('myFFTDiv', data2, layout2, {responsive: true});
+                Plotly.newPlot('myFFTDiv2', data2, layout2, {responsive: true});
 
                 // var data2 = [$scope.trace2];
 
