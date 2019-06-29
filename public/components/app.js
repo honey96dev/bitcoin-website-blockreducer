@@ -109,6 +109,15 @@
                 // data: { activeTab: 'fftChart' }
             })
 
+            .state('num100-log-chart', {
+                url: '/num100_log_chart',
+                templateUrl: './components/sections/num100-log/views/num100.html',
+                // templateUrl: './components/sections/admin/estimate-chart/views/estimate-chart.html',
+                controller: 'Num100LogChartController',
+                controllerAs: 'vm',
+                // data: { activeTab: 'fftChart' }
+            })
+
             .state('exchange', {
                 url: '/exchange',
                 templateUrl: './components/sections/exchange/views/exchange.html',
