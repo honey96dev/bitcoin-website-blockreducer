@@ -37,14 +37,14 @@ service.GetLast1MonthFFT = function (req, res) {
         // GetCustomizeData(selectSql, startTime, endTime, function(callback) {
         //     deferred.resolve(_.add(callback));
         // });
-        let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_5m_view` WHERE `timestamp` BETWEEN ? AND ?");
+        let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `fft_5m` WHERE `timestamp` BETWEEN ? AND ?");
         dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
             if (error) { console.log(error); }
             const cnt = results[0].count;
             const step = cnt / config.hiddenChartEntryNum;
 
             // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
-            sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `lowPass`, `highPass` FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM bitmex_data_5m_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
+            sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `lowPass`, `highPass` FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `fft_5m` WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, startTime, endTime);
             console.log('GetLast1MonthFFT', sql);
             dbConn.query(sql, null, function(error, results, fields) {
                 if (error) {
@@ -115,7 +115,7 @@ service.GetCustomizeFFT = function (candle, startTime, endTime, timeZone) {
     if (candle == null || candle.length === 0) {
         candle = '5m';
     }
-    let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN ? AND ?", candle);
+    let sql = sprintf("SELECT COUNT(`timestamp`) `count` FROM `fft_%s` WHERE `timestamp` BETWEEN ? AND ?", candle);
     dbConn.query(sql, [startTime, endTime], function(error, results, fields) {
         if (error) { console.log(error); }
         const cnt = results[0].count;
@@ -125,7 +125,7 @@ service.GetCustomizeFFT = function (candle, startTime, endTime, timeZone) {
         const timestampFormat = "%Y-%m-%dT%H:%i:%s.000Z";
 
         // sql = sprintf("SELECT `timestamp`, `open` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN ? AND ? ORDER BY `timestamp`;", binSize);
-        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`high`) `high`, AVG(`low`) `low`, AVG(`close`) `close`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `high`, `low`, `close`, `lowPass`, `highPass` FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `high`, `low`, `close`, `lowPass`, `highPass` FROM bitmex_data_%s_view WHERE `isoDate` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, timestampFormat, timestampOffset, timestampFormat, candle, startTime, endTime);
+        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass` FROM (SELECT FLOOR((@row_number:=@row_number + 1)/%f) AS num, `timestamp`, `open`, `lowPass`, `highPass` FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `lowPass`, `highPass` FROM `fft_%s` WHERE `timestamp` BETWEEN '%s' AND '%s'  ORDER BY `timestamp`) `bd`, (SELECT @row_number:=0) `row_num`  ORDER BY `timestamp` ASC) `tmp` GROUP BY `num`;", step, timestampFormat, timestampOffset, timestampFormat, candle, startTime, endTime);
         console.log('GetCutomizePrice', sql);
         dbConn.query(sql, null, function(error, results, fields) {
             if (error) { console.log(error); }
@@ -332,7 +332,7 @@ service.GetEstimateFFT = function (candle, startTime, endTime, timeZone, estimat
             deferred.resolve(_.add([]));
             return;
         }
-        sql = sprintf("SELECT * FROM (SELECT * FROM `bitmex_data_%s_view` WHERE `timestamp` <= '%s' ORDER BY `timestamp` DESC LIMIT 500) `tmp` ORDER BY `timestamp` ASC;", candle, endTime);
+        sql = sprintf("SELECT * FROM (SELECT * FROM `fft_%s` WHERE `timestamp` <= '%s' ORDER BY `timestamp` DESC LIMIT 500) `tmp` ORDER BY `timestamp` ASC;", candle, endTime);
         // console.log(sql);
         dbConn.query(sql, undefined, function (error, results, fields) {
             if (error) {
@@ -384,7 +384,7 @@ service.GetEstimateFFT = function (candle, startTime, endTime, timeZone, estimat
                 let lastOpen = lastItem.open;
                 let offset;
                 let calcedOpen;
-                console.log(lastItem, results);
+                // console.log(lastItem, results);
                 for (let estimate of estimates) {
                     offset = (estimate.price - lastOpen) / estimate.time;
                     for (let i = 1; i <= estimate.time; i++) {
@@ -470,7 +470,7 @@ service.GetEstimateFFT = function (candle, startTime, endTime, timeZone, estimat
                     lastOpen = estimate.price;
                 }
 
-                // console.log(JSON.stringify(newRecords));
+                console.log(JSON.stringify(newRecords));
 
                 sql = sprintf("INSERT INTO `estimates`(`userId`, `timestamp`, `symbol`, `open`, `high`, `low`, `close`, `volume`, `lowPass`, `highPass`) VALUES ?;");
                 dbConn.query(sql, [newRecords], (error, results, fields) => {
@@ -479,7 +479,7 @@ service.GetEstimateFFT = function (candle, startTime, endTime, timeZone, estimat
                         deferred.resolve(_.add([]));
                         return;
                     }
-                    sql = sprintf("SELECT COUNT(*) `count` FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `bitmex_data_%s_view` WHERE `timestamp` BETWEEN '%s' AND '%s' UNION SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `estimates` WHERE `userId` = '%s') `tmp`;", candle, startTime, endTime, userId);
+                    sql = sprintf("SELECT COUNT(*) `count` FROM (SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `fft_%s` WHERE `timestamp` BETWEEN '%s' AND '%s' UNION SELECT `timestamp`, `open`, `lowPass`, `highPass` FROM `estimates` WHERE `userId` = '%s') `tmp`;", candle, startTime, endTime, userId);
                     dbConn.query(sql, undefined, (error, results, fields) => {
                         if (error) {
                             console.log(error);
@@ -492,7 +492,7 @@ service.GetEstimateFFT = function (candle, startTime, endTime, timeZone, estimat
 
                         const dataCount = results[0].count;
                         const step = dataCount / config.hiddenChartEntryNum;
-                        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass`, FLOOR((@row_number:=@row_number + 1)/%f) AS num FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `lowPass`, `highPass` FROM `bitmex_data_%s_view` WHERE `timestamp` >= '%s' AND `timestamp` < '%s' UNION SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `lowPass`, `highPass` FROM `estimates` WHERE `userId` = '%s') `tmp`, (SELECT @row_number:=0) `row_num` GROUP BY `num`;", step, timestampFormat, timestampOffset, timestampFormat, candle, startTime, endTime, timestampFormat, timestampOffset, timestampFormat, userId);
+                        sql = sprintf("SELECT `timestamp` `isoDate`, AVG(`open`) `open`, AVG(`lowPass`) `lowPass`, AVG(`highPass`) `highPass`, FLOOR((@row_number:=@row_number + 1)/%f) AS num FROM (SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `lowPass`, `highPass` FROM `fft_%s` WHERE `timestamp` >= '%s' AND `timestamp` < '%s' UNION SELECT DATE_FORMAT(ADDTIME(STR_TO_DATE(`timestamp`, '%s'), '%s'), '%s') `timestamp`, `open`, `lowPass`, `highPass` FROM `estimates` WHERE `userId` = '%s') `tmp`, (SELECT @row_number:=0) `row_num` GROUP BY `num`;", step, timestampFormat, timestampOffset, timestampFormat, candle, startTime, endTime, timestampFormat, timestampOffset, timestampFormat, userId);
                         console.log(sql);
                         dbConn.query(sql, null, function(error, results, fields) {
                             if (error) { console.log(error); }
